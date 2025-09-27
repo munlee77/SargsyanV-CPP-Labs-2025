@@ -1,7 +1,7 @@
 #include <iostream>
 
 namespace {
-const int kDecimalNum = 10;        // десятичное число
+const int kDecimalNum = 10;         // десятичное число
 const int kTwelveHoursFormat = 12;  // 12-числовой формат
 
 const int kMidnight = 0;  // полночь
