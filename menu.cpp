@@ -1,35 +1,45 @@
 #include "menu.hpp"
 
+using namespace std;
+
+// анонимное пространство для вспомогательных функций
 namespace {
+// макс. число итераций
 const int kMaxIterations = 1e5;
 
+// функция
 [[nodiscard]] double CalculateF(double x, double k) {
     return x - k * cos(x);
 }
 
+// итерационная функция
 [[nodiscard]] double CalculateIterationF(double x, double k) {
     return k * cos(x);
 }
 
+// производная функции
 [[nodiscard]] double CalculateDerivativeF(double x, double k) {
     return 1 + k * sin(x);
 }
 
+// проверка совпадения знаков
 [[nodiscard]] bool IsFunctionsSignsEqual(double left, double right, double k) {
     return ((CalculateF(left, k) > 0.) == (CalculateF(right, k) > 0.));
 }
 
+// точность кол-ва знаков
 [[nodiscard]] int ConvertAccuracyToPrecision(double accuracy) {
     double epsilon = log10(accuracy);
     int precision = static_cast<int>(epsilon);
     return abs(precision);
 }
 
+// ф-ции ввода данных
 [[nodiscard]] double EnterAccuracy() {
     double accuracy{};
 
-    std::cout << "Введите погрешность" << '\n';
-    std::cin >> accuracy;
+    cout << "Введите погрешность" << '\n';
+    cin >> accuracy;
 
     return accuracy;
 }
@@ -37,8 +47,8 @@ const int kMaxIterations = 1e5;
 [[nodiscard]] double EnterCoefficient() {
     double coefficient{};
 
-    std::cout << "Введите коеффициент перед косинусом" << '\n';
-    std::cin >> coefficient;
+    cout << "Введите коеффициент перед косинусом" << '\n';
+    cin >> coefficient;
 
     return coefficient;
 }
@@ -46,8 +56,8 @@ const int kMaxIterations = 1e5;
 [[nodiscard]] double EnterX() {
     double x0{};
 
-    std::cout << "Введите x0 цифрами" << '\n';
-    std::cin >> x0;
+    cout << "Введите x0 цифрами" << '\n';
+    cin >> x0;
 
     return x0;
 }
@@ -55,8 +65,8 @@ const int kMaxIterations = 1e5;
 [[nodiscard]] double EnterBeginRange() {
     double left{};
 
-    std::cout << "Введите начало диапазона цифрами" << '\n';
-    std::cin >> left;
+    cout << "Введите начало диапазона цифрами" << '\n';
+    cin >> left;
 
     return left;
 }
@@ -64,8 +74,8 @@ const int kMaxIterations = 1e5;
 [[nodiscard]] double EnterEndRange() {
     double right{};
 
-    std::cout << "Введите конец диапазона цифрами" << '\n';
-    std::cin >> right;
+    cout << "Введите конец диапазона цифрами" << '\n';
+    cin >> right;
 
     return right;
 }
@@ -73,11 +83,11 @@ const int kMaxIterations = 1e5;
 [[nodiscard]] int EnterMethod() {
     int method{};
 
-    std::cout << "Введите номер метода, которым хотите найти корень" << '\n';
-    std::cout << "1. Нахождение корня методом итераций" << '\n'
-              << "2. Нахождение корня методом Ньютона" << '\n'
-              << "3. Нахождение корня методом половинного деления" << '\n';
-    std::cin >> method;
+    cout << "Введите номер метода, которым хотите найти корень" << '\n';
+    cout << "1. Нахождение корня методом итераций" << '\n'
+         << "2. Нахождение корня методом Ньютона" << '\n'
+         << "3. Нахождение корня методом половинного деления" << '\n';
+    cin >> method;
 
     return method;
 }
@@ -85,22 +95,25 @@ const int kMaxIterations = 1e5;
 [[nodiscard]] char EnterContinueExecution() {
     char continueExecution{};
 
-    std::cout << "Хотите продолжить? Введите [y/n]: ";
-    std::cin >> continueExecution;
+    cout << "Хотите продолжить? Введите [y/n]: ";
+    cin >> continueExecution;
 
     return continueExecution;
 }
 
+// вывод результатов решения
 void PrintEquationResult(NonLinearEquation::EquationResult rez, double accuracy) {
     if (!rez.solution) {
-        std::cerr << "Программа не смогла найти корень c заданными данными" << std::endl;
+        cerr << "Программа не смогла найти корень c заданными данными" << endl;
         return;
     }
-    std::cout << std::fixed << std::setprecision(ConvertAccuracyToPrecision(accuracy)) << "Корень " << rez.root << '\t' << "Количество итераций "
-              << rez.iterations << '\n';
+    cout << fixed << setprecision(ConvertAccuracyToPrecision(accuracy)) << "Корень " << rez.root << '\t' << "Количество итераций " << rez.iterations
+         << '\n';
 }
 }  // namespace
+// namespace
 
+// именованное пространство для имён и функций
 namespace NonLinearEquation {
 void StartApp() {
     char continueExecution = 'y';
@@ -112,6 +125,7 @@ void StartApp() {
     }
 }
 
+// меню выбора метода
 void ChooseTask() {
     int method = EnterMethod();
 
@@ -131,6 +145,7 @@ void ChooseTask() {
     }
 }
 
+// МЕТОД ИТЕРАЦИЙ
 void StartIterationMethod() {
     double сoefficient = EnterCoefficient();
     double accuracy = EnterAccuracy();
@@ -161,6 +176,7 @@ EquationResult CalculateIterationMethod(double сoefficient, double accuracy, do
     return res;
 }
 
+// МЕТОД НЬЮТОНА
 void StartNewtonMethod() {
     double сoefficient = EnterCoefficient();
     double accuracy = EnterAccuracy();
@@ -192,6 +208,7 @@ EquationResult CalculateNewtonMethod(double сoefficient, double accuracy, doubl
     return res;
 }
 
+// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ
 void StartHalfDivisionMethod() {
     double сoefficient = EnterCoefficient();
     double accuracy = EnterAccuracy();
@@ -206,7 +223,7 @@ void StartHalfDivisionMethod() {
 EquationResult CalculateHalfDivisionMethod(double сoefficient, double accuracy, double left, double right) {
     EquationResult res;
     if (left > right) {
-        std::swap(left, right);
+        swap(left, right);
     }
 
     if (IsFunctionsSignsEqual(left, right, сoefficient) == true) {
@@ -232,3 +249,4 @@ EquationResult CalculateHalfDivisionMethod(double сoefficient, double accuracy,
     return res;
 }
 }  // namespace NonLinearEquation
+   // namespace NonLinearEquation
