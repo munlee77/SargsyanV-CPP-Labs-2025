@@ -1,15 +1,15 @@
-#include <iostream>       // Для ввода-вывода (cin, cout)
-#include <cmath>          // Для математических функций (pow, atan, fabs)
-#include <iomanip>        // Для форматирования вывода (setw, setprecision)
+#include <cmath>     // Для математических функций (pow, atan, fabs)
+#include <iomanip>   // Для форматирования вывода (setw, setprecision)
+#include <iostream>  // Для ввода-вывода (cin, cout)
 
-using namespace std;      // Используем стандартное пространство имен
+using namespace std;  // Используем стандартное пространство имен
 
 // Прототипы функций - объявляем функции до их использования
-void task1();             // Функция для задания 1
-void task2();             // Функция для задания 2
-void task3();             // Функция для задания 3
-int task4();             // Функция для задания 4
-bool continueWork();      // Функция для проверки продолжения работы
+void task1();         // Функция для задания 1
+void task2();         // Функция для задания 2
+void task3();         // Функция для задания 3
+int task4();          // Функция для задания 4
+bool continueWork();  // Функция для проверки продолжения работы
 
 int main() {
     // Устанавливаем русскую локаль для корректного отображения кириллицы
@@ -28,7 +28,7 @@ int main() {
         cout << "4. Задание 4 - Вычисление y по формуле с частичными суммами" << endl;
         cout << "0. Выход" << endl;
         cout << "Выберите задание: ";
-        cin >> choice;    // Считываем выбор пользователя
+        cin >> choice;  // Считываем выбор пользователя
 
         // Обрабатываем выбор пользователя с помощью switch
         switch (choice) {
@@ -77,9 +77,9 @@ void task1() {
     cout << "\n=== ЗАДАНИЕ 1 ===" << endl;
     int n, m;  // Переменные для границы диапазона и делителя
     cout << "Введите n: ";
-    cin >> n;   // Считываем верхнюю границу диапазона
+    cin >> n;  // Считываем верхнюю границу диапазона
     cout << "Введите m (m < n): ";
-    cin >> m;   // Считываем делитель
+    cin >> m;  // Считываем делитель
 
     // Проверяем корректность введенных данных
     if (m >= n) {
@@ -90,7 +90,7 @@ void task1() {
     int sum = 0;  // Переменная для накопления суммы
 
     // Цикл от 1 до n для перебора всех натуральных чисел
-    for (int i = 1; i <= n; i ++) {
+    for (int i = 1; i <= n; i++) {
         // Проверяем условия: делится на 5 И не делится на m
         if (i % 5 == 0 && i % m != 0) {
             sum += i;  // Добавляем число к сумме
@@ -98,9 +98,7 @@ void task1() {
     }
 
     // Выводим результат
-    cout << "Сумма чисел от 1 до " << n
-         << ", которые делятся на 5 и не делятся на " << m
-         << ": " << endl;
+    cout << "Сумма чисел от 1 до " << n << ", которые делятся на 5 и не делятся на " << m << ": " << endl;
     cout << sum << endl;
 }
 
@@ -118,7 +116,7 @@ void task2() {
     if (a >= 0) {
         double result = 1.0;
         for (int i = 2; i <= 8; i += 2) {
-            double currentTerm = pow(i,2);
+            double currentTerm = pow(i, 2);
             result *= currentTerm;
         }
         resultS = result - a;
@@ -132,7 +130,7 @@ void task2() {
     }
     cout << "Результат вычислений:" << endl;
     cout << "При a = " << a << ", S = " << fixed << resultS << endl;
-    }
+}
 
 // Задание 3: Вычисление суммы ряда и функции Y(x)
 void task3() {
@@ -159,32 +157,26 @@ void task3() {
             n = 0;
 
             while (n < maxIterations) {
-                term *= -x * x * (2*n-1) / (2*n+1);
+                term *= -x * x * (2 * n - 1) / (2 * n + 1);
                 if (fabs(term) < eps) {
                     break;
                 }
                 s_x += term;
                 n++;
             }
-    }
-       // do {
-         //   term = (n % 2 == 0 ? 1.0 : -1.0) * pow(x, 2.0 * n + 1.0) / (2.0 * n + 1.0);
-           // if (fabs(term) >= eps) {
-             //   s_x += term;
-               // n++;
-            //}
+        }
+        // do {
+        //   term = (n % 2 == 0 ? 1.0 : -1.0) * pow(x, 2.0 * n + 1.0) / (2.0 * n + 1.0);
+        // if (fabs(term) >= eps) {
+        //   s_x += term;
+        // n++;
+        //}
         //} while (fabs(term) >= eps);
-        cout << setw(8) << setprecision(1) << x << setw(12) << setprecision(6) << y_x
-        << setw(12) << setprecision(6) << s_x << setw(8) << n << endl;
+        cout << setw(8) << setprecision(1) << x << setw(12) << setprecision(6) << y_x << setw(12) << setprecision(6) << s_x << setw(8) << n << endl;
     }
-
-
 
     //    double y = atan(x);
-
-
 }
-
 
 // Задание 4: Вычисление y по формуле с частичными суммами
 int task4() {
@@ -211,31 +203,28 @@ int task4() {
     for (int numOfTerm = 1; numOfTerm <= n; ++numOfTerm) {
         curTerm *= -x * (2.0 * numOfTerm + 3.0) / (2.0 * numOfTerm);
         y += curTerm;
-     //   double numerator = 1.0;
-       // double denominator = 1.0;
+        //   double numerator = 1.0;
+        // double denominator = 1.0;
 
-    //    for (int i = 1; i <= numOfTerm; ++i) {
-      //      numerator *= (2 * i + 3);
+        //    for (int i = 1; i <= numOfTerm; ++i) {
+        //      numerator *= (2 * i + 3);
         //
-        //for (int i = 1; i <= numOfTerm; ++i) {
-          //  denominator *= (2 * i);
+        // for (int i = 1; i <= numOfTerm; ++i) {
+        //  denominator *= (2 * i);
         //}
 
-      //  double curTerm = pow(-1, numOfTerm) * (numerator / denominator) * pow(x, numOfTerm);
+        //  double curTerm = pow(-1, numOfTerm) * (numerator / denominator) * pow(x, numOfTerm);
 
-    //    y += curTerm;
+        //    y += curTerm;
 
-        if (numOfTerm == firstCheckValueCount - 1) { // 3 слагаемых: 1 + первое + второе
+        if (numOfTerm == firstCheckValueCount - 1) {  // 3 слагаемых: 1 + первое + второе
             cout << "Сумма при 3 слагаемых: " << fixed << setprecision(6) << y << endl;
-        }
-        else if (numOfTerm == secCheckValueCount - 1) { // 5 слагаемых
+        } else if (numOfTerm == secCheckValueCount - 1) {  // 5 слагаемых
             cout << "Сумма при 5 слагаемых: " << fixed << setprecision(6) << y << endl;
-        }
-        else if (numOfTerm == thirdCheckValueCount - 1) { // 10 слагаемых
+        } else if (numOfTerm == thirdCheckValueCount - 1) {  // 10 слагаемых
             cout << "Сумма при 10 слагаемых: " << fixed << setprecision(6) << y << endl;
         }
     }
-    cout << "Окончательная сумма: " << n << " слагаемых: " << fixed <<
-    setprecision(6) << y << endl;
+    cout << "Окончательная сумма: " << n << " слагаемых: " << fixed << setprecision(6) << y << endl;
     return 0;
 }
