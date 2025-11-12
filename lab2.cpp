@@ -4,6 +4,19 @@
 
 using namespace std;  // Используем стандартное пространство имен
 
+const int kDivider_5 = 5;
+const int kStart_2 = 2;
+const int kEnd_8 = 8;
+const int kStart_3 = 3;
+const int kEnd_9 = 9;
+const int kWidth_8 = 8;
+const int kWidth_12 = 12;
+const int kPrecision_6 = 6;
+const int kPrecision_1 = 1;
+const double kEps = 1e-9;
+const double kNum_2 = 2.0;
+const double kNum_3 = 3.0;
+
 // Прототипы функций - объявляем функции до их использования
 void task1();         // Функция для задания 1
 void task2();         // Функция для задания 2
@@ -15,7 +28,7 @@ int main() {
     // Устанавливаем русскую локаль для корректного отображения кириллицы
     setlocale(LC_ALL, "Russian");
 
-    char choice;          // Переменная для выбора пункта меню
+    char choice = 0;      // Переменная для выбора пункта меню
     bool running = true;  // Флаг продолжения работы программы
 
     // Главный цикл программы
@@ -65,7 +78,7 @@ int main() {
 
 // Функция для проверки желания пользователя продолжить работу
 bool continueWork() {
-    char answer;  // Переменная для ответа пользователя
+    char answer = 0;  // Переменная для ответа пользователя
     cout << "Продолжить работу? (y/n): ";
     cin >> answer;  // Считываем ответ
     // Возвращаем true если ответ 'y' или 'Y', иначе false
@@ -75,7 +88,8 @@ bool continueWork() {
 // Задание 1: Сумма чисел, делящихся на 5 и не делящихся на m
 void task1() {
     cout << "\n=== ЗАДАНИЕ 1 ===" << endl;
-    int n, m;  // Переменные для границы диапазона и делителя
+    int n = 0;
+    int m = 0;  // Переменные для границы диапазона и делителя
     cout << "Введите n: ";
     cin >> n;  // Считываем верхнюю границу диапазона
     cout << "Введите m (m < n): ";
@@ -92,7 +106,7 @@ void task1() {
     // Цикл от 1 до n для перебора всех натуральных чисел
     for (int i = 1; i <= n; i++) {
         // Проверяем условия: делится на 5 И не делится на m
-        if (i % 5 == 0 && i % m != 0) {
+        if (i % kDivider_5 == 0 && i % m != 0) {
             sum += i;  // Добавляем число к сумме
         }
     }
@@ -106,23 +120,22 @@ void task1() {
 void task2() {
     cout << "\n=== ЗАДАНИЕ 2 ===" << endl;
 
-    double a;
+    double a = 0.0;
     cout << "Введите значение a: " << endl;
     cin >> a;
 
-    double resultS;
-    double currentTerm;
+    double resultS = 0.0;
 
     if (a >= 0) {
         double result = 1.0;
-        for (int i = 2; i <= 8; i += 2) {
+        for (int i = 2; i <= kEnd_8; i += kStart_2) {
             double currentTerm = pow(i, 2);
             result *= currentTerm;
         }
         resultS = result - a;
     } else {
         double result = 1.0;
-        for (int i = 3; i <= 9; i += 3) {
+        for (int i = 3; i <= kEnd_9; i += kStart_3) {
             double currentTerm = i - 2;
             result *= currentTerm;
         }
@@ -139,15 +152,16 @@ void task3() {
     const double step = 0.2;
     const double eps = 1e-6;
     const int maxIterations = 1000000;
+    double x = 0.0;
 
-    cout << setw(8) << "X" << setw(12) << "Y(x)" << setw(12) << "S(x)" << setw(8) << "N" << endl;
+    cout << setw(kWidth_8) << "X" << setw(kWidth_12) << "Y(x)" << setw(kWidth_12) << "S(x)" << setw(kWidth_8) << "N" << endl;
     cout << fixed;
 
-    for (double x = 0.0; x <= 1.0 + 1e-9; x += step) {
+    while (x <= 1.0 + kEps) {
         double y_x = atan(x);
         double s_x = 0.0;
         int n = 0;
-        double term;
+        double term = 0.0;
         if (fabs(x) < eps) {
             s_x = 0;
             n = 0;
@@ -172,7 +186,9 @@ void task3() {
         // n++;
         //}
         //} while (fabs(term) >= eps);
-        cout << setw(8) << setprecision(1) << x << setw(12) << setprecision(6) << y_x << setw(12) << setprecision(6) << s_x << setw(8) << n << endl;
+        cout << setw(kWidth_8) << setprecision(kPrecision_1) << x << setw(kWidth_12) << setprecision(kPrecision_6) << y_x << setw(kWidth_12)
+             << setprecision(kPrecision_6) << s_x << setw(kWidth_8) << n << endl;
+        x += step;
     }
 
     //    double y = atan(x);
@@ -185,9 +201,8 @@ int task4() {
     const int secCheckValueCount = 5;
     const int thirdCheckValueCount = 10;
 
-    double sumx;
-    int n;
-    double x;
+    int n = 0;
+    double x = 0.0;
 
     cout << "Введите натуральное число n и x для нахождения y" << endl;
     cin >> n >> x;
@@ -201,7 +216,7 @@ int task4() {
     double curTerm = 1.0;
 
     for (int numOfTerm = 1; numOfTerm <= n; ++numOfTerm) {
-        curTerm *= -x * (2.0 * numOfTerm + 3.0) / (2.0 * numOfTerm);
+        curTerm *= -x * (kNum_2 * numOfTerm + kNum_3) / (kNum_2 * numOfTerm);
         y += curTerm;
         //   double numerator = 1.0;
         // double denominator = 1.0;
@@ -218,13 +233,13 @@ int task4() {
         //    y += curTerm;
 
         if (numOfTerm == firstCheckValueCount - 1) {  // 3 слагаемых: 1 + первое + второе
-            cout << "Сумма при 3 слагаемых: " << fixed << setprecision(6) << y << endl;
+            cout << "Сумма при 3 слагаемых: " << fixed << setprecision(kPrecision_6) << y << endl;
         } else if (numOfTerm == secCheckValueCount - 1) {  // 5 слагаемых
-            cout << "Сумма при 5 слагаемых: " << fixed << setprecision(6) << y << endl;
+            cout << "Сумма при 5 слагаемых: " << fixed << setprecision(kPrecision_6) << y << endl;
         } else if (numOfTerm == thirdCheckValueCount - 1) {  // 10 слагаемых
-            cout << "Сумма при 10 слагаемых: " << fixed << setprecision(6) << y << endl;
+            cout << "Сумма при 10 слагаемых: " << fixed << setprecision(kPrecision_6) << y << endl;
         }
     }
-    cout << "Окончательная сумма: " << n << " слагаемых: " << fixed << setprecision(6) << y << endl;
+    cout << "Окончательная сумма: " << n << " слагаемых: " << fixed << setprecision(kPrecision_6) << y << endl;
     return 0;
 }
