@@ -14,6 +14,11 @@ enum class EquationMethod {
     HalfDivision
 };
 
+enum class EquationType {
+    Original,
+    New
+};
+
 // cтруктура для возврата результатов решения
 struct EquationResult {
     // найденный корень
@@ -37,5 +42,8 @@ void StartHalfDivisionMethod();
 [[nodiscard]] EquationResult CalculateIterationMethod(double coefficient, double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateNewtonMethod(double coefficient, double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateHalfDivisionMethod(double coefficient, double epsilon, double left, double right);
+
+[[nodiscard]] EquationResult CalculateNewtonMethodNewEquation(double epsilon, double x0);
+[[nodiscard]] EquationResult CalculateHalfDivisionMethodNewEquation(double epsilon, double left, double right);
 }  // namespace NonLinearEquation
 // namespace NonLinearEquation

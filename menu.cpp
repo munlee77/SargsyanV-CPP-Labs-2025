@@ -6,6 +6,11 @@ using namespace std;
 namespace {
 // макс. число итераций
 const int kMaxIterations = 1e5;
+const double kDivisionThreshold = 1e-12;
+const double kCoefficient = 2.0;
+const double kRootDegree = 0.25;
+const double kDerivativeConstant = 1.0 / 8.0;
+const double kRootDegreeDerivative = -0.75;
 
 // функция
 [[nodiscard]] double CalculateF(double x, double k) {
@@ -25,6 +30,18 @@ const int kMaxIterations = 1e5;
 // проверка совпадения знаков
 [[nodiscard]] bool IsFunctionsSignsEqual(double left, double right, double k) {
     return ((CalculateF(left, k) > 0.) == (CalculateF(right, k) > 0.));
+}
+
+[[nodiscard]] double CalculateF_New(double x) {
+    return sin(x) - pow(x / kCoefficient + kCoefficient, kRootDegree) + kCoefficient;
+}
+
+[[nodiscard]] double CalculateDerivativeF_New(double x) {
+    return cos(x) - (kDerivativeConstant)*pow(x / kCoefficient + kCoefficient, kRootDegreeDerivative);
+}
+
+[[nodiscard]] bool IsFunctionsSignsEqual_New(double left, double right) {
+    return ((CalculateF_New(left) > 0.) == (CalculateF_New(right) > 0.));
 }
 
 // точность кол-ва знаков
@@ -90,6 +107,15 @@ const int kMaxIterations = 1e5;
     cin >> method;
 
     return method;
+}
+
+[[nodiscard]] int ChooseEquationType() {
+    int choice{};
+    cout << "Выберите уравнение:\n";
+    cout << "1. Оригинальное (x - k*cos(x) = 0)\n";
+    cout << "2. Новое (sin(x) - (x/2+2)^(1/4) + 2 = 0)\n";
+    cin >> choice;
+    return choice;
 }
 
 [[nodiscard]] char EnterContinueExecution() {
@@ -176,48 +202,96 @@ EquationResult CalculateIterationMethod(double сoefficient, double accuracy, do
     return res;
 }
 
-// МЕТОД НЬЮТОНА
+// МЕТОД НЬЮТОНА (для обоих уравнений)
 void StartNewtonMethod() {
-    double сoefficient = EnterCoefficient();
-    double accuracy = EnterAccuracy();
-    double x0 = EnterX();
-
-    EquationResult result = CalculateNewtonMethod(сoefficient, accuracy, x0);
-
-    PrintEquationResult(result, accuracy);
+    int eqChoice = ChooseEquationType();
+    if (eqChoice == 1) {
+        double coefficient = EnterCoefficient();
+        double accuracy = EnterAccuracy();
+        double x0 = EnterX();
+        EquationResult result = CalculateNewtonMethod(coefficient, accuracy, x0);
+        PrintEquationResult(result, accuracy);
+    } else if (eqChoice == 2) {
+        double accuracy = EnterAccuracy();
+        double x0 = EnterX();
+        EquationResult result = CalculateNewtonMethodNewEquation(accuracy, x0);
+        PrintEquationResult(result, accuracy);
+    } else {
+        cerr << "Неверный выбор уравнения\n";
+        exit(0);
+    }
 }
 
-EquationResult CalculateNewtonMethod(double сoefficient, double accuracy, double x0) {
+EquationResult CalculateNewtonMethod(double coefficient, double accuracy, double x0) {
     EquationResult res;
-    res.root = x0 - (CalculateF(x0, сoefficient) / CalculateDerivativeF(x0, сoefficient));
+    res.root = x0 - (CalculateF(x0, coefficient) / CalculateDerivativeF(x0, coefficient));
 
     while (fabs(res.root - x0) > accuracy) {
-        if (res.iterations == kMaxIterations) {
+        if (res.iterations >= kMaxIterations) {
             res.solution = false;
             break;
         }
         x0 = res.root;
-        res.root -= CalculateF(x0, сoefficient) / CalculateDerivativeF(x0, сoefficient);
+        double derivative = CalculateDerivativeF(x0, coefficient);
+        if (fabs(derivative) < kDivisionThreshold) {
+            res.solution = false;
+            break;
+        }
+        res.root = x0 - (CalculateF(x0, coefficient) / derivative);
         ++res.iterations;
     }
 
     if (fabs(res.root - x0) > accuracy) {
         res.solution = false;
     }
-
     return res;
 }
 
-// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ
+EquationResult CalculateNewtonMethodNewEquation(double accuracy, double x0) {
+    EquationResult res;
+    res.root = x0 - (CalculateF_New(x0) / CalculateDerivativeF_New(x0));
+
+    while (fabs(res.root - x0) > accuracy) {
+        if (res.iterations >= kMaxIterations) {
+            res.solution = false;
+            break;
+        }
+        x0 = res.root;
+        double derivative = CalculateDerivativeF_New(x0);
+        if (fabs(derivative) < kDivisionThreshold) {
+            res.solution = false;
+            break;
+        }
+        res.root = x0 - (CalculateF_New(x0) / derivative);
+        ++res.iterations;
+    }
+
+    if (fabs(res.root - x0) > accuracy) {
+        res.solution = false;
+    }
+    return res;
+}
+
+// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ (для обоих уравнений)
 void StartHalfDivisionMethod() {
-    double сoefficient = EnterCoefficient();
-    double accuracy = EnterAccuracy();
-    double left = EnterBeginRange();
-    double right = EnterEndRange();
-
-    EquationResult result = CalculateHalfDivisionMethod(сoefficient, accuracy, left, right);
-
-    PrintEquationResult(result, accuracy);
+    int eqChoice = ChooseEquationType();
+    if (eqChoice == 1) {
+        double coefficient = EnterCoefficient();
+        double accuracy = EnterAccuracy();
+        double left = EnterBeginRange();
+        double right = EnterEndRange();
+        EquationResult result = CalculateHalfDivisionMethod(coefficient, accuracy, left, right);
+        PrintEquationResult(result, accuracy);
+    } else if (eqChoice == 2) {
+        double accuracy = EnterAccuracy();
+        double left = EnterBeginRange();
+        double right = EnterEndRange();
+        EquationResult result = CalculateHalfDivisionMethodNewEquation(accuracy, left, right);
+        PrintEquationResult(result, accuracy);
+    } else {
+        cerr << "Неверный выбор уравнения\n";
+        exit(0);
+    }
 }
 
 EquationResult CalculateHalfDivisionMethod(double сoefficient, double accuracy, double left, double right) {
@@ -246,6 +320,34 @@ EquationResult CalculateHalfDivisionMethod(double сoefficient, double accuracy,
     }
     res.root = (right + left) / 2;
     res.iterations = iterations;
+    return res;
+}
+
+EquationResult CalculateHalfDivisionMethodNewEquation(double accuracy, double left, double right) {
+    EquationResult res;
+    if (left > right) {
+        swap(left, right);
+    }
+    if (IsFunctionsSignsEqual_New(left, right)) {
+        res.solution = false;
+        return res;
+    }
+
+    double x{};
+    while (right - left > accuracy) {
+        if (res.iterations >= kMaxIterations) {
+            res.solution = false;
+            break;
+        }
+        x = (left + right) / kCoefficient;
+        if (IsFunctionsSignsEqual_New(x, right)) {
+            right = x;
+        } else {
+            left = x;
+        }
+        ++res.iterations;
+    }
+    res.root = (left + right) / kCoefficient;
     return res;
 }
 }  // namespace NonLinearEquation
