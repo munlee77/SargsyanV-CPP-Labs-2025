@@ -105,7 +105,7 @@ const int kMaxIterations = 1e5;
 void PrintEquationResult(NonLinearEquation::EquationResult rez, double accuracy) {
     if (!rez.solution) {
         cerr << "Программа не смогла найти корень c заданными данными" << endl;
-        return;
+        exit(0);
     }
     cout << fixed << setprecision(ConvertAccuracyToPrecision(accuracy)) << "Корень " << rez.root << '\t' << "Количество итераций " << rez.iterations
          << '\n';
@@ -140,8 +140,8 @@ void ChooseTask() {
             StartHalfDivisionMethod();
             break;
         default:
-            std::cout << "Неверно введены данные" << '\n';
-            break;
+            cout << "Неверно введены данные" << '\n';
+            exit(0);
     }
 }
 
