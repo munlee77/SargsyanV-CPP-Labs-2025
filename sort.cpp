@@ -1,5 +1,7 @@
 #include "sort.hpp"
 
+using namespace std;
+
 namespace {
 
 const size_t kStaticArraySize = 5;
@@ -11,9 +13,9 @@ void CreateRandomArray(int* sourceArray, size_t arraySize) {
     const int kminDistribution = 0;
     const int kmaxDistribution = 99;
 
-    std::random_device r{};
-    std::default_random_engine randomEngine(r());
-    std::uniform_int_distribution distribution(kminDistribution, kmaxDistribution);
+    random_device r{};
+    default_random_engine randomEngine(r());
+    uniform_int_distribution distribution(kminDistribution, kmaxDistribution);
     for (size_t i = kLoopStart; i < arraySize; ++i) {
         sourceArray[i] = distribution(randomEngine);
     }
@@ -29,31 +31,31 @@ void CheckDynamicArrayElementsNumber(size_t elementsNumber) {
     const size_t arrayElementsMinNumber = 2;
     const size_t arrayElementsMaxNumber = 1e5;
     if (elementsNumber < arrayElementsMinNumber || elementsNumber > arrayElementsMaxNumber) {
-        std::cout << "Введены неверные данные" << std::endl;
+        cout << "Введены неверные данные" << endl;
         exit(0);
     }
 }
 
 [[nodiscard]] int EnterTaskNumber() {
     int task{};
-    std::cout << "Выберите (1/2/3)" << std::endl;
-    std::cin >> task;
+    cout << "Выберите (1/2/3)" << endl;
+    cin >> task;
     return task;
 }
 
 [[nodiscard]] size_t EnterDynamicArrayElementsNumber() {
     size_t dynamicArrayElementsNumber{};
-    std::cout << "Введите количество элементов динамического массива: (2 <= n <= 10000)" << std::endl;
-    std::cin >> dynamicArrayElementsNumber;
+    cout << "Введите количество элементов динамического массива: (2 <= n <= 10000)" << endl;
+    cin >> dynamicArrayElementsNumber;
     CheckDynamicArrayElementsNumber(dynamicArrayElementsNumber);
     return dynamicArrayElementsNumber;
 }
 
 void SelectTask() {
-    std::cout << "Выберите задание:" << std::endl;
-    std::cout << "1. Сортировка статичного массива" << std::endl;
-    std::cout << "2. Сортировка динамического массива" << std::endl;
-    std::cout << "3. Выход" << std::endl;
+    cout << "Выберите задание:" << endl;
+    cout << "1. Сортировка статичного массива" << endl;
+    cout << "2. Сортировка динамического массива" << endl;
+    cout << "3. Выход" << endl;
 }
 
 void FuncSwap(int& left, int& right) {
@@ -64,7 +66,7 @@ void FuncSwap(int& left, int& right) {
 
 void ArrayOutput(int* array, size_t arraySize) {
     for (size_t i = kLoopStart; i < arraySize; ++i) {
-        std::cout << array[i] << " ";
+        cout << array[i] << " ";
     }
 }
 
@@ -72,9 +74,9 @@ void TableOutput(int* array, size_t arraySize, int permutationsNumber, int compa
     const int kWidthPermutationsNumber = 32;
     const int kWidthComparisonsNumber = 32;
 
-    std::cout << '\t' << "Количество перестановок" << '\t' << '\t' << "Количество сравнений\n";
+    cout << '\t' << "Количество перестановок" << '\t' << '\t' << "Количество сравнений\n";
     ArrayOutput(array, arraySize);
-    std::cout << std::setw(kWidthPermutationsNumber) << permutationsNumber << std::setw(kWidthComparisonsNumber) << comparisonsNumber << '\n';
+    cout << setw(kWidthPermutationsNumber) << permutationsNumber << setw(kWidthComparisonsNumber) << comparisonsNumber << '\n';
 }
 }  // namespace
 
@@ -85,11 +87,11 @@ void LaunchApp() {
     while (continueExecution == 'y') {
         Menu();
 
-        std::cout << "Продолжить (y/n)?" << std::endl;
-        std::cin >> continueExecution;
+        cout << "Продолжить (y/n)?" << endl;
+        cin >> continueExecution;
 
         if (continueExecution != 'y' && continueExecution != 'n') {
-            std::cout << "Введены неверные данные" << std::endl;
+            cout << "Введены неверные данные" << endl;
             exit(0);
         }
     }
@@ -109,12 +111,12 @@ void Menu() {
             break;
         }
         case ArrayType::exit: {
-            std::cout << "Работа программы завершена" << std::endl;
+            cout << "Работа программы завершена" << endl;
             exit(0);
             break;
         }
         default: {
-            std::cout << "error" << std::endl;
+            cout << "error" << endl;
             break;
         }
     }
@@ -129,27 +131,27 @@ void StaticArrayOutput() {
     CreateRandomArray(sourceArray, kStaticArraySize);
     CreateCloneArray(cloneArray, sourceArray, kStaticArraySize);
 
-    std::cout << "Исходный массив:\n";
+    cout << "Исходный массив:\n";
     ArrayOutput(sourceArray, kStaticArraySize);
 
     SelectionSort(sourceArray, kStaticArraySize, kSwitchMin, permutationsNumber, comparisonsNumber);
-    std::cout << "\nСортировка выбором по возрастанию 1";
+    cout << "\nСортировка выбором по возрастанию 1";
     TableOutput(sourceArray, kStaticArraySize, permutationsNumber, comparisonsNumber);
     SelectionSort(sourceArray, kStaticArraySize, kSwitchMin, permutationsNumber, comparisonsNumber);
-    std::cout << "Сортировка выбором по возрастанию 2";
+    cout << "Сортировка выбором по возрастанию 2";
     TableOutput(sourceArray, kStaticArraySize, permutationsNumber, comparisonsNumber);
     SelectionSort(sourceArray, kStaticArraySize, kSwitchMax, permutationsNumber, comparisonsNumber);
-    std::cout << "Сортировка выбором по убыванию" << '\t';
+    cout << "Сортировка выбором по убыванию" << '\t';
     TableOutput(sourceArray, kStaticArraySize, permutationsNumber, comparisonsNumber);
 
     BubbleSort(cloneArray, kStaticArraySize, kSwitchMin, permutationsNumber, comparisonsNumber);
-    std::cout << "Сортировка пузырьком по возрастанию 1";
+    cout << "Сортировка пузырьком по возрастанию 1";
     TableOutput(cloneArray, kStaticArraySize, permutationsNumber, comparisonsNumber);
     BubbleSort(cloneArray, kStaticArraySize, kSwitchMin, permutationsNumber, comparisonsNumber);
-    std::cout << "Сортировка пузырьком по возрастанию 2";
+    cout << "Сортировка пузырьком по возрастанию 2";
     TableOutput(cloneArray, kStaticArraySize, permutationsNumber, comparisonsNumber);
     BubbleSort(cloneArray, kStaticArraySize, kSwitchMax, permutationsNumber, comparisonsNumber);
-    std::cout << "Сортировка пузырьком по убыванию";
+    cout << "Сортировка пузырьком по убыванию";
     TableOutput(cloneArray, kStaticArraySize, permutationsNumber, comparisonsNumber);
 }
 
@@ -165,12 +167,12 @@ void DynamicArrayOutput() {
     CreateCloneArray(cloneArray, sourceArray, dynamicArrayElementsNumber);
 
     SelectionSort(sourceArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber);
-    std::cout << "Количество перестановок и сравнений:" << std::endl;
-    std::cout << permutationsNumber << ' ' << comparisonsNumber << std::endl;
+    cout << "Количество перестановок и сравнений:" << endl;
+    cout << permutationsNumber << ' ' << comparisonsNumber << endl;
 
     BubbleSort(cloneArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber);
-    std::cout << "Количество перестановок и сравнений: " << std::endl;
-    std::cout << permutationsNumber << ' ' << comparisonsNumber << std::endl;
+    cout << "Количество перестановок и сравнений: " << endl;
+    cout << permutationsNumber << ' ' << comparisonsNumber << endl;
 
     delete[] sourceArray;
     delete[] cloneArray;
