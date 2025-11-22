@@ -25,8 +25,6 @@ int task4();          // Функция для задания 4
 bool continueWork();  // Функция для проверки продолжения работы
 
 int main() {
-    // Устанавливаем русскую локаль для корректного отображения кириллицы
-    setlocale(LC_ALL, "Russian");
 
     char choice = 0;      // Переменная для выбора пункта меню
     bool running = true;  // Флаг продолжения работы программы
@@ -179,13 +177,7 @@ void task3() {
                 n++;
             }
         }
-        // do {
-        //   term = (n % 2 == 0 ? 1.0 : -1.0) * pow(x, 2.0 * n + 1.0) / (2.0 * n + 1.0);
-        // if (fabs(term) >= eps) {
-        //   s_x += term;
-        // n++;
-        //}
-        //} while (fabs(term) >= eps);
+
         cout << setw(kWidth_8) << setprecision(kPrecision_1) << x << setw(kWidth_12) << setprecision(kPrecision_6) << y_x << setw(kWidth_12)
              << setprecision(kPrecision_6) << s_x << setw(kWidth_8) << n << endl;
         x += step;
@@ -218,19 +210,6 @@ int task4() {
     for (int numOfTerm = 1; numOfTerm <= n; ++numOfTerm) {
         curTerm *= -x * (kNum_2 * numOfTerm + kNum_3) / (kNum_2 * numOfTerm);
         y += curTerm;
-        //   double numerator = 1.0;
-        // double denominator = 1.0;
-
-        //    for (int i = 1; i <= numOfTerm; ++i) {
-        //      numerator *= (2 * i + 3);
-        //
-        // for (int i = 1; i <= numOfTerm; ++i) {
-        //  denominator *= (2 * i);
-        //}
-
-        //  double curTerm = pow(-1, numOfTerm) * (numerator / denominator) * pow(x, numOfTerm);
-
-        //    y += curTerm;
 
         if (numOfTerm == firstCheckValueCount - 1) {  // 3 слагаемых: 1 + первое + второе
             cout << "Сумма при 3 слагаемых: " << fixed << setprecision(kPrecision_6) << y << endl;
