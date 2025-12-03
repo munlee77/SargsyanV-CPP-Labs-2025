@@ -6,12 +6,16 @@ using namespace std;
 // для скрытия вспомогательных функций от внешнего доступа
 namespace {
 
-const size_t kStaticArraySize = 5; // размер статического массива
-const bool kSwitchMin = false; // флаг для сортировки по возрастанию (мин значения в начале)
-const bool kSwitchMax = true; // флаг для сортировки по убыванию (макс значения в начале)
-const size_t kLoopStart = 0; // нач. индекс для всех циклов
+// размер статического массива
+const size_t kStaticArraySize = 5;
+// флаг для сортировки по возрастанию (мин значения в начале)
+const bool kSwitchMin = false;
+// флаг для сортировки по убыванию (макс значения в начале)
+const bool kSwitchMax = true;
+// нач. индекс для всех циклов
+const size_t kLoopStart = 0;
 
-//генератор рандом чисел для массива
+// генератор рандом чисел для массива
 void CreateRandomArray(int* sourceArray, size_t arraySize) {
     // минимальное значение для генерации случайных чисел
     const int kminDistribution = 0;
@@ -23,10 +27,11 @@ void CreateRandomArray(int* sourceArray, size_t arraySize) {
     // генератор случ.ч. с сидом от random_device
     default_random_engine randomEngine(r());
     // генератор случ.ч. с сидом от random_device
-    uniform_int_distribution distribution(kminDistribution, kmaxDistribution); // равномерное распределение
+    uniform_int_distribution distribution(kminDistribution, kmaxDistribution);
     // цикл по всем элементам массива
     for (size_t i = kLoopStart; i < arraySize; ++i) {
-        sourceArray[i] = distribution(randomEngine); //заполнение элемента случайным числом
+        // заполнение элемента случайным числом
+        sourceArray[i] = distribution(randomEngine);
     }
 }
 
@@ -39,11 +44,11 @@ void CreateCloneArray(int* arrNew, int* arrOld, size_t arraySize) {
 
 // ф-ция проверки корректности кол-ва элементов динамического массива
 void CheckDynamicArrayElementsNumber(size_t elementsNumber) {
-    //мин кол-во элементов
+    // мин кол-во элементов
     const size_t arrayElementsMinNumber = 2;
-    //макс кол-во элементов
+    // макс кол-во элементов
     const size_t arrayElementsMaxNumber = 1e5;
-    //проверка диапозона
+    // проверка диапозона
     if (elementsNumber < arrayElementsMinNumber || elementsNumber > arrayElementsMaxNumber) {
         cout << "Введены неверные данные" << endl;
         exit(0);
@@ -103,6 +108,7 @@ void TableOutput(int* array, size_t arraySize, int permutationsNumber, int compa
     cout << setw(kWidthPermutationsNumber) << permutationsNumber << setw(kWidthComparisonsNumber) << comparisonsNumber << '\n';
 }
 }  // namespace
+// namespace
 
 // для ф-ций интерфейса
 namespace InterfaceFunctions {
@@ -268,3 +274,4 @@ void BubbleSort(int* arrBubble, size_t arraySize, bool switchMinMax, int& permut
 }
 
 }  // namespace InterfaceFunctions
+// namespace InterfaceFunctions
