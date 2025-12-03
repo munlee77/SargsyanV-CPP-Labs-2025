@@ -21,8 +21,8 @@ enum class ArrayType {
 //int& - счетчик сравнений (передается по ссылке)
 void SelectionSort(int*, size_t, bool, int&, int&);
 void BubbleSort(int*, size_t, bool, int&, int&);
-void StaticArrayOutput();
-void DynamicArrayOutput();
-void Menu();
-void LaunchApp();
+void StaticArrayOutput(); // статический массив
+void DynamicArrayOutput(); // динамический массив
+void Menu(); // меню
+void LaunchApp(); // главный цикл программы
 }  // namespace InterfaceFunctions
