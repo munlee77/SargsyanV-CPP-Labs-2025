@@ -13,11 +13,16 @@ const size_t kLoopStart = 0; // нач. индекс для всех цикло�
 
 //генератор рандом чисел для массива
 void CreateRandomArray(int* sourceArray, size_t arraySize) {
-    const int kminDistribution = 0; // минимальное значение для генерации случайных чисел
-    const int kmaxDistribution = 99; // максимальное значение для генерации случайных чисел
+    // минимальное значение для генерации случайных чисел
+    const int kminDistribution = 0;
+    // максимальное значение для генерации случайных чисел
+    const int kmaxDistribution = 99;
 
-    random_device r{}; // источник энтропии для случайных чисел
-    default_random_engine randomEngine(r()); // генератор случ.ч. с сидом от random_device
+    // источник энтропии для случайных чисел
+    random_device r{};
+    // генератор случ.ч. с сидом от random_device
+    default_random_engine randomEngine(r());
+    // генератор случ.ч. с сидом от random_device
     uniform_int_distribution distribution(kminDistribution, kmaxDistribution); // равномерное распределение
     // цикл по всем элементам массива
     for (size_t i = kLoopStart; i < arraySize; ++i) {
@@ -34,8 +39,10 @@ void CreateCloneArray(int* arrNew, int* arrOld, size_t arraySize) {
 
 // ф-ция проверки корректности кол-ва элементов динамического массива
 void CheckDynamicArrayElementsNumber(size_t elementsNumber) {
-    const size_t arrayElementsMinNumber = 2; //мин кол-во элементов
-    const size_t arrayElementsMaxNumber = 1e5; //макс кол-во элементов
+    //мин кол-во элементов
+    const size_t arrayElementsMinNumber = 2;
+    //макс кол-во элементов
+    const size_t arrayElementsMaxNumber = 1e5;
     //проверка диапозона
     if (elementsNumber < arrayElementsMinNumber || elementsNumber > arrayElementsMaxNumber) {
         cout << "Введены неверные данные" << endl;
@@ -45,7 +52,8 @@ void CheckDynamicArrayElementsNumber(size_t elementsNumber) {
 
 // ввод номера задания пользователем
 [[nodiscard]] int EnterTaskNumber() {
-    int task{}; // переменная для номера задания
+    // переменная для номера задания
+    int task{};
     cout << "Выберите (1/2/3)" << endl;
     cin >> task;
     return task;
@@ -53,7 +61,8 @@ void CheckDynamicArrayElementsNumber(size_t elementsNumber) {
 
 // ввод кол-ва элементов динамического массива
 [[nodiscard]] size_t EnterDynamicArrayElementsNumber() {
-    size_t dynamicArrayElementsNumber{}; // переменная для кол-ва элементов
+    // переменная для кол-ва элементов
+    size_t dynamicArrayElementsNumber{};
     cout << "Введите количество элементов динамического массива: (2 <= n <= 10000)" << endl;
     cin >> dynamicArrayElementsNumber;
     CheckDynamicArrayElementsNumber(dynamicArrayElementsNumber);
@@ -84,8 +93,10 @@ void ArrayOutput(int* array, size_t arraySize) {
 
 // форматированный вывод результатов сортировки в виде таблицы
 void TableOutput(int* array, size_t arraySize, int permutationsNumber, int comparisonsNumber) {
-    const int kWidthPermutationsNumber = 32; // ширина колонки для количества перестановок
-    const int kWidthComparisonsNumber = 32; // ширина колонки для количества сравнений
+    // ширина колонки для количества перестановок
+    const int kWidthPermutationsNumber = 32;
+    // ширина колонки для количества сравнений
+    const int kWidthComparisonsNumber = 32;
 
     cout << '\t' << "Количество перестановок" << '\t' << '\t' << "Количество сравнений\n";
     ArrayOutput(array, arraySize);
@@ -97,7 +108,8 @@ void TableOutput(int* array, size_t arraySize, int permutationsNumber, int compa
 namespace InterfaceFunctions {
 // запуск приложения
 void LaunchApp() {
-    char continueExecution = 'y'; // продолжение работы приложения
+    // продолжение работы приложения
+    char continueExecution = 'y';
     while (continueExecution == 'y') {
         Menu();
 
@@ -112,9 +124,11 @@ void LaunchApp() {
     }
 }
 
-void Menu() { // главное меню
+// главное меню
+void Menu() {
     SelectTask();
-    int task = EnterTaskNumber(); // ввод номера задания
+    // ввод номера задания
+    int task = EnterTaskNumber();
 
     // преобразование номера в <ArrayType> и выбор варианта
     switch (static_cast<ArrayType>(task)) {
@@ -140,10 +154,14 @@ void Menu() { // главное меню
 
 // статический массив
 void StaticArrayOutput() {
-    int permutationsNumber = 0; // счетчик перестановок
-    int comparisonsNumber = 0; // счетчик сравнений
-    int sourceArray[kStaticArraySize]{}; // источник статического массива
-    int cloneArray[kStaticArraySize]{}; // копия статического массива
+    // счетчик перестановок
+    int permutationsNumber = 0;
+    // счетчик сравнений
+    int comparisonsNumber = 0;
+    // источник статического массива
+    int sourceArray[kStaticArraySize]{};
+    // копия статического массива
+    int cloneArray[kStaticArraySize]{};
 
     CreateRandomArray(sourceArray, kStaticArraySize);
     CreateCloneArray(cloneArray, sourceArray, kStaticArraySize);
@@ -174,25 +192,31 @@ void StaticArrayOutput() {
 
 // динамический массив
 void DynamicArrayOutput() {
-    int permutationsNumber{}; // счет перестановок
-    int comparisonsNumber{}; // счет сравнений
+    // счет перестановок
+    int permutationsNumber{};
+    // счет сравнений
+    int comparisonsNumber{};
     size_t dynamicArrayElementsNumber = EnterDynamicArrayElementsNumber();
 
-    int* sourceArray = new int[dynamicArrayElementsNumber]; // выделение памяти для исходного массива
-    int* cloneArray = new int[dynamicArrayElementsNumber]; // выделение памяти для массива-копии
+    // выделение памяти для исходного массива
+    int* sourceArray = new int[dynamicArrayElementsNumber];
+    // выделение памяти для массива-копии
+    int* cloneArray = new int[dynamicArrayElementsNumber];
 
     CreateRandomArray(sourceArray, dynamicArrayElementsNumber);
     CreateCloneArray(cloneArray, sourceArray, dynamicArrayElementsNumber);
 
-    SelectionSort(sourceArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber); // сортировка выбором
+    // сортировка выбором
+    SelectionSort(sourceArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber);
     cout << "Количество перестановок и сравнений (сортировка выбором):" << endl;
     cout << permutationsNumber << ' ' << comparisonsNumber << endl;
 
-    BubbleSort(cloneArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber); // сортировка пузырьком
+    // сортировка пузырьком
+    BubbleSort(cloneArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber);
     cout << "Количество перестановок и сравнений (сортировка пузырьком): " << endl;
     cout << permutationsNumber << ' ' << comparisonsNumber << endl;
 
-    //освобождение памяти перестановок и сравнений
+    // освобождение памяти перестановок и сравнений
     delete[] sourceArray;
     delete[] cloneArray;
 }
@@ -201,7 +225,8 @@ void DynamicArrayOutput() {
 void SelectionSort(int* arrSelection, size_t arraySize, bool switchMinMax, int& permutationsNumber, int& comparisionsNumber) {
     permutationsNumber = 0;
     comparisionsNumber = 0;
-    size_t rememberedIndex{}; // переменная для запоминания индекса мин/макс элемента
+    // переменная для запоминания индекса мин/макс элемента
+    size_t rememberedIndex{};
 
     for (size_t i = kLoopStart; i < arraySize; i++) {
         rememberedIndex = i;
@@ -220,7 +245,7 @@ void SelectionSort(int* arrSelection, size_t arraySize, bool switchMinMax, int& 
     }
 }
 
-//алгоритм сортировки пузырьком
+// алгоритм сортировки пузырьком
 void BubbleSort(int* arrBubble, size_t arraySize, bool switchMinMax, int& permutationsNumber, int& comparisionsNumber) {
     const int kcounterInitialValue = 0;
     int counter = 1;
