@@ -1,0 +1,6 @@
+Hello, World!
+This is a test message for encryption.
+12345 numbers and special characters: !@#$%^&*()
+Multiple lines
+should work correctly.
+End of file.
