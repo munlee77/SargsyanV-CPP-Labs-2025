@@ -1,0 +1,5 @@
+/home/mathv/SargsyanV-CPP-Labs-2025/build/CMakeFiles/CaesarCipher.dir
+/home/mathv/SargsyanV-CPP-Labs-2025/build/CMakeFiles/format.dir
+/home/mathv/SargsyanV-CPP-Labs-2025/build/CMakeFiles/check-format.dir
+/home/mathv/SargsyanV-CPP-Labs-2025/build/CMakeFiles/edit_cache.dir
+/home/mathv/SargsyanV-CPP-Labs-2025/build/CMakeFiles/rebuild_cache.dir

@@ -204,27 +204,45 @@ void DynamicArrayOutput() {
     int comparisonsNumber{};
     size_t dynamicArrayElementsNumber = EnterDynamicArrayElementsNumber();
 
-    // выделение памяти для исходного массива
-    int* sourceArray = new int[dynamicArrayElementsNumber];
-    // выделение памяти для массива-копии
-    int* cloneArray = new int[dynamicArrayElementsNumber];
+    // Множители для создания массивов разного размера
+    const size_t multipliers[] = {1, 10, 100};
 
-    CreateRandomArray(sourceArray, dynamicArrayElementsNumber);
-    CreateCloneArray(cloneArray, sourceArray, dynamicArrayElementsNumber);
+    for (size_t multiplier : multipliers) {
+        size_t currentSize = dynamicArrayElementsNumber * multiplier;
 
-    // сортировка выбором
-    SelectionSort(sourceArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber);
-    cout << "Количество перестановок и сравнений (сортировка выбором):" << endl;
-    cout << permutationsNumber << ' ' << comparisonsNumber << endl;
+        cout << "\nРабота с массивом размером " << currentSize;
+        if (multiplier == 1) {
+            cout << " (исходный размер)" << endl;
+        } else if (multiplier == 10) {
+            cout << " (исходный * 10)" << endl;
+        } else {
+            cout << " (исходный * 100)" << endl;
+        }
 
-    // сортировка пузырьком
-    BubbleSort(cloneArray, dynamicArrayElementsNumber, kSwitchMin, permutationsNumber, comparisonsNumber);
-    cout << "Количество перестановок и сравнений (сортировка пузырьком): " << endl;
-    cout << permutationsNumber << ' ' << comparisonsNumber << endl;
+        // выделение памяти
+        int* sourceArray = new int[currentSize];
+        int* cloneArray = new int[currentSize];
 
-    // освобождение памяти перестановок и сравнений
-    delete[] sourceArray;
-    delete[] cloneArray;
+        // заполнение массивов
+        CreateRandomArray(sourceArray, currentSize);
+        CreateCloneArray(cloneArray, sourceArray, currentSize);
+
+        // сортировка выбором
+        SelectionSort(sourceArray, currentSize, kSwitchMin, permutationsNumber, comparisonsNumber);
+        cout << "Сортировка выбором: перестановок = " << permutationsNumber
+             << ", сравнений = " << comparisonsNumber << endl;
+
+        // сортировка пузырьком
+        BubbleSort(cloneArray, currentSize, kSwitchMin, permutationsNumber, comparisonsNumber);
+        cout << "Сортировка пузырьком: перестановок = " << permutationsNumber
+             << ", сравнений = " << comparisonsNumber << endl;
+
+        // освобождение памяти
+        delete[] sourceArray;
+        delete[] cloneArray;
+    }
+
+    cout << endl;
 }
 
 // алгоритм сортировки выбором
