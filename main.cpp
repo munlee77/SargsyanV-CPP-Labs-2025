@@ -714,7 +714,7 @@ void ShowAdditionalInfo(const std::vector<SymbolStats>& stats, int totalChars,
     // Статистика по вариантам шифрования
     int maxVariants = 0;
     int minVariants = 1000;
-    double avgVariants = 0;
+    int avgVariants = 0;
 
     for (const auto& stat : stats) {
         if (stat.variantCount > maxVariants) maxVariants = stat.variantCount;
