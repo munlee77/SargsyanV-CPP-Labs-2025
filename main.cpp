@@ -10,19 +10,19 @@
 #include <map>
 
 // Константы для программы
-const int ASCII_SIZE = 128;           // Размер таблицы ASCII
-const int MAX_WORD_LENGTH = 1024;     // Максимальная длина слова
-const int BUFFER_SIZE = 4096;         // Размер буфера для чтения
-const int PAGE_SIZE = 5;              // Количество строк на странице
+const int kASCII_SIZE = 128;           // Размер таблицы ASCII
+const int kMAX_WORD_LENGTH = 1024;     // Максимальная длина слова
+const int kBUFFER_SIZE = 4096;         // Размер буфера для чтения
+const int kPAGE_SIZE = 5;              // Количество строк на странице
 
 // Структура для хранения данных о файлах
 struct FileData {
     int* keys;                        // Динамический массив ключей
     int keysCount;                    // Количество ключей
-    const char* inputFile;            // Исходный файл
-    const char* notepadFile;          // Файл с кодовым блокнотом
-    const char* encodedFile;          // Зашифрованный файл
-    const char* decodedFile;          // Расшифрованный файл
+    const char* kinputFile;            // Исходный файл
+    const char* knotepadFile;          // Файл с кодовым блокнотом
+    const char* kencodedFile;          // Зашифрованный файл
+    const char* kdecodedFile;          // Расшифрованный файл
 };
 
 // Структура для статистики символов
@@ -100,16 +100,16 @@ int CountWordsInNotepad(FileData* data) {
     }
 
     int wordCount = 0;
-    char buffer[BUFFER_SIZE];
+    char buffer[kBUFFER_SIZE];
     bool inWord = false;
 
-    while (file.getline(buffer, BUFFER_SIZE) || !file.eof()) {
+    while (file.getline(buffer, kBUFFER_SIZE) || !file.eof()) {
         if (file.fail() && !file.eof()) {
             file.clear();
         }
 
         int len = 0;
-        while (len < BUFFER_SIZE && buffer[len] != '\0') {
+        while (len < kBUFFER_SIZE && buffer[len] != '\0') {
             len++;
         }
 
@@ -156,19 +156,19 @@ void GenerateKeys(FileData* data) {
         exit(1);
     }
 
-    char buffer[BUFFER_SIZE];
-    char word[MAX_WORD_LENGTH];
+    char buffer[kBUFFER_SIZE];
+    char word[kMAX_WORD_LENGTH];
     int wordPos = 0;
     int keyIndex = 0;
     bool inWord = false;
 
-    while (file.getline(buffer, BUFFER_SIZE) || !file.eof()) {
+    while (file.getline(buffer, kBUFFER_SIZE) || !file.eof()) {
         if (file.fail() && !file.eof()) {
             file.clear();
         }
 
         int len = 0;
-        while (len < BUFFER_SIZE && buffer[len] != '\0') {
+        while (len < kBUFFER_SIZE && buffer[len] != '\0') {
             len++;
         }
 
@@ -176,7 +176,7 @@ void GenerateKeys(FileData* data) {
             char c = buffer[i];
 
             if (std::isalnum(static_cast<unsigned char>(c))) {
-                if (wordPos < MAX_WORD_LENGTH - 1) {
+                if (wordPos < kMAX_WORD_LENGTH - 1) {
                     word[wordPos++] = c;
                 } else {
                     // Если слово слишком длинное, завершаем его
@@ -186,7 +186,7 @@ void GenerateKeys(FileData* data) {
                     for (int j = 0; j < wordPos; j++) {
                         sum += static_cast<unsigned char>(word[j]);
                     }
-                    data->keys[keyIndex++] = sum % ASCII_SIZE;
+                    data->keys[keyIndex++] = sum % kASCII_SIZE;
 
                     // Начинаем новое слово
                     wordPos = 0;
@@ -201,7 +201,7 @@ void GenerateKeys(FileData* data) {
                     for (int j = 0; j < wordPos; j++) {
                         sum += static_cast<unsigned char>(word[j]);
                     }
-                    data->keys[keyIndex++] = sum % ASCII_SIZE;
+                    data->keys[keyIndex++] = sum % kASCII_SIZE;
 
                     wordPos = 0;
                 }
@@ -290,7 +290,7 @@ void EncryptFile(FileData* data) {
         int original = static_cast<unsigned char>(ch);
 
         // Проверяем, что символ в ASCII диапазоне
-        if (original >= ASCII_SIZE) {
+        if (original >= kASCII_SIZE) {
             std::cout << "Ошибка: файл содержит не-ASCII символы" << std::endl;
             input.close();
             encoded.close();
@@ -298,7 +298,7 @@ void EncryptFile(FileData* data) {
         }
 
         int key = data->keys[keyIndex % data->keysCount];
-        int encrypted = PositiveMod(original + key, ASCII_SIZE);
+        int encrypted = PositiveMod(original + key, kASCII_SIZE);
 
         encoded.put(static_cast<char>(encrypted));
         charCount++;
@@ -337,7 +337,7 @@ void DecryptFile(FileData* data) {
     while (encoded.get(ch)) {
         int encrypted = static_cast<unsigned char>(ch);
         int key = data->keys[keyIndex % data->keysCount];
-        int decrypted = PositiveMod(encrypted - key, ASCII_SIZE);
+        int decrypted = PositiveMod(encrypted - key, kASCII_SIZE);
 
         decoded.put(static_cast<char>(decrypted));
         charCount++;
@@ -417,7 +417,7 @@ std::vector<SymbolStats> CollectDetailedStatistics(FileData* data) {
         int original = static_cast<unsigned char>(ch1);
         int encrypted = static_cast<unsigned char>(ch2);
 
-        if (original < ASCII_SIZE) {
+        if (original < kASCII_SIZE) {
             // Ищем символ в мапе
             auto it = statsMap.find(original);
             if (it == statsMap.end()) {
@@ -516,8 +516,8 @@ void DisplayStatisticsPage(const std::vector<SymbolStats>& stats,
     std::cout << "├─────┼────────────┼─────────┼──────────┼──────────────┼────────────┼──────────────┤" << std::endl;
 
     // Вывод строк таблицы для текущей страницы
-    int startIndex = page * PAGE_SIZE;
-    int endIndex = std::min(startIndex + PAGE_SIZE, totalSymbols);
+    int startIndex = page * kPAGE_SIZE;
+    int endIndex = std::min(startIndex + kPAGE_SIZE, totalSymbols);
 
     for (int i = startIndex; i < endIndex; i++) {
         const SymbolStats& stat = stats[i];
@@ -535,7 +535,7 @@ void DisplayStatisticsPage(const std::vector<SymbolStats>& stats,
     std::cout << "└─────┴────────────┴─────────┴──────────┴──────────────┴────────────┴──────────────┘" << std::endl;
 
     // Вывод информации о странице
-    int totalPages = (totalSymbols + PAGE_SIZE - 1) / PAGE_SIZE;
+    int totalPages = (totalSymbols + kPAGE_SIZE - 1) / kPAGE_SIZE;
     std::cout << "\nСтраница " << (page + 1) << " из " << totalPages
               << " (показано " << (endIndex - startIndex) << " из " << totalSymbols << " символов)" << std::endl;
 }
@@ -758,7 +758,7 @@ void ShowDetailedStatistics(FileData* data) {
 
     // Постраничный вывод
     int currentPage = 0;
-    int totalPages = (totalSymbols + PAGE_SIZE - 1) / PAGE_SIZE;
+    int totalPages = (totalSymbols + kPAGE_SIZE - 1) / kPAGE_SIZE;
     char command;
     bool sortedByFrequency = true;
 
@@ -846,9 +846,9 @@ void ProcessFiles(FileData* data) {
     // Проверка совпадения файлов
     std::cout << "\nПроверяем совпадение файлов..." << std::endl;
     if (CompareFiles(data)) {
-        std::cout << "✓ Файлы совпадают! Шифрование работает корректно." << std::endl;
+        std::cout << "Файлы совпадают! Шифрование работает корректно." << std::endl;
     } else {
-        std::cout << "⚠ Внимание! Файлы не совпадают! Проверьте алгоритм шифрования." << std::endl;
+        std::cout << "Внимание! Файлы не совпадают! Проверьте алгоритм шифрования." << std::endl;
     }
 
     // Вывод статистики
