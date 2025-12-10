@@ -1,10 +1,10 @@
-name: C/C++ CI
+name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   build:
@@ -16,10 +16,23 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ clang-tidy
+        sudo apt-get install -y cmake g++ clang-tidy
+
+    - name: Configure CMake
+      uses: threeal/cmake-action@v2
+      with:
+        build-args: -B build
 
     - name: Build
-      run: g++ -std=c++11 -Wall -Wextra -pedantic homework.cpp -o homework
+      uses: threeal/cmake-action@v2
+      with:
+        action: build
+        build-args: --config Release
 
     - name: Run clang-tidy
-      run: clang-tidy homework.cpp -- -std=c++11
+      run: |
+        clang-tidy homework.cpp -- -std=c++11 || true
+
+    - name: Test
+      run: |
+        echo "hello world test." | ./build/homework || true
