@@ -212,5 +212,3 @@ int main() {
 
     return 0;
 }
-
-//запуск кода через cmake - ./homework
