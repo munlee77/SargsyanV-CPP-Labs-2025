@@ -33,6 +33,22 @@ struct ResultToPrint {
     int n;           // число разбиений
 };
 
+// Функция для вычисления количества знаков после запятой на основе eps
+int getPrecisionFromEps(double eps) {
+    if (eps >= 0.1) return 1;
+    else if (eps >= 0.01) return 2;
+    else if (eps >= 0.001) return 3;
+    else if (eps >= 0.0001) return 4;
+    else if (eps >= 0.00001) return 5;
+    else return 6;  // для eps = 0.000001
+}
+
+// Функция для корректного вывода eps
+void printEps(double eps) {
+    int precision = getPrecisionFromEps(eps);
+    cout << fixed << setprecision(precision) << eps;
+}
+
 // Функция для печати горизонтальной линии таблицы
 void printHorizontalLine(int col_widths[], const char* left, const char* middle, const char* right) {
     cout << left;
@@ -47,8 +63,8 @@ void printHorizontalLine(int col_widths[], const char* left, const char* middle,
     cout << right << endl;
 }
 
-// Функция вывода таблицы (исправленная версия)
-void printTabl(ResultToPrint* i_prn, int countRowOfTable) {
+// Функция вывода таблицы (теперь принимает eps для определения точности вывода)
+void printTabl(ResultToPrint* i_prn, int countRowOfTable, double eps) {
     int widthOfTableColumns[knumberOfTableColumns] = {
         kfirstColumnWidth, ksecondColumnWidth,
         kthirdColumnWidth, kfourthColumnWidth
@@ -57,6 +73,9 @@ void printTabl(ResultToPrint* i_prn, int countRowOfTable) {
     char title[knumberOfTableColumns][50] = {
         "Function", "Integral", "IntSum", "N"
     };
+
+    // Определяем точность вывода чисел на основе eps
+    int precision = getPrecisionFromEps(eps);
 
     printHorizontalLine(widthOfTableColumns, ul, Td, ur);
 
@@ -82,11 +101,12 @@ void printTabl(ResultToPrint* i_prn, int countRowOfTable) {
 
         cout << " " << setw(widthOfTableColumns[0]) << left << i_prn[i].name << " " << vt;
 
-        cout << " " << setw(widthOfTableColumns[1]) << right << fixed << setprecision(6)
-             << i_prn[i].i_toch << " " << vt;
+        // Используем динамическую точность на основе eps
+        cout << " " << setw(widthOfTableColumns[1]) << right << fixed
+             << setprecision(precision) << i_prn[i].i_toch << " " << vt;
 
-        cout << " " << setw(widthOfTableColumns[2]) << right << fixed << setprecision(6)
-             << i_prn[i].i_sum << " " << vt;
+        cout << " " << setw(widthOfTableColumns[2]) << right << fixed
+             << setprecision(precision) << i_prn[i].i_sum << " " << vt;
 
         cout << " " << setw(widthOfTableColumns[3]) << right << i_prn[i].n << " " << vt;
 
@@ -104,7 +124,7 @@ void printTabl(ResultToPrint* i_prn, int countRowOfTable) {
 // Тип указателя на функцию
 typedef double (*TPF)(double);
 
-// функции для численного интегрирования методом прямоугольников
+// функции для численного интегрирования методом прямоугольника
 double integrationByRectangle(TPF f, double a, double b, double eps, int& n) {
     double I1, I2;
     double h;
@@ -187,7 +207,9 @@ int main() {
 
     for (int i = 0; i < numEps; i++) {
         double eps = epsilons[i];
-        cout << "Точность eps = " << eps << endl;
+        cout << "Точность eps = ";
+        printEps(eps);  // Используем функцию для корректного вывода eps
+        cout << endl;
 
         for (int j = 0; j < numFuncs; j++) {
             // выделение памяти и копирование названия ф-ции
@@ -202,9 +224,38 @@ int main() {
             results[j].n = n;
         }
 
-        printTabl(results, numFuncs);
+        // Передаем eps в функцию печати таблицы
+        printTabl(results, numFuncs, eps);
 
         // освобождение памяти
+        for (int j = 0; j < numFuncs; j++) {
+            delete[] results[j].name;
+        }
+    }
+
+    // ТЕПЕРЬ МЕТОД ТРАПЕЦИЙ
+    cout << "МЕТОД ТРАПЕЦИЙ" << endl << endl;
+
+    for (int i = 0; i < numEps; i++) {
+        double eps = epsilons[i];
+        cout << "Точность eps = ";
+        printEps(eps);
+        cout << endl;
+
+        for (int j = 0; j < numFuncs; j++) {
+            results[j].name = new char[strlen(names[j]) + 1];
+            strcpy(results[j].name, names[j]);
+
+            results[j].i_toch = exact[j];
+            int n = 0;
+
+            // численное интегрирование методом трапеций
+            results[j].i_sum = integrationByTrapezoidal(funcs[j], a, b, eps, n);
+            results[j].n = n;
+        }
+
+        printTabl(results, numFuncs, eps);
+
         for (int j = 0; j < numFuncs; j++) {
             delete[] results[j].name;
         }
