@@ -104,7 +104,7 @@ void printTabl(ResultToPrint* i_prn, int countRowOfTable) {
 // Тип указателя на функцию
 typedef double (*TPF)(double);
 
-// Функции для численного интегрирования
+// функции для численного интегрирования методом прямоугольников
 double integrationByRectangle(TPF f, double a, double b, double eps, int& n) {
     double I1, I2;
     double h;
@@ -129,6 +129,7 @@ double integrationByRectangle(TPF f, double a, double b, double eps, int& n) {
     return I2;
 }
 
+// функции для численного интегрирования методом трапеций
 double integrationByTrapezoidal(TPF f, double a, double b, double eps, int& n) {
     double I1, I2;
     double h;
@@ -189,6 +190,7 @@ int main() {
         cout << "Точность eps = " << eps << endl;
 
         for (int j = 0; j < numFuncs; j++) {
+            // выделение памяти и копирование названия ф-ции
             results[j].name = new char[strlen(names[j]) + 1];
             strcpy(results[j].name, names[j]);
 
