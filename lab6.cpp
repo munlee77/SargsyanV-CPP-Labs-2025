@@ -25,6 +25,7 @@ const char* Tu = "┴";
 const char* Tr = "├";
 const char* Tl = "┤";
 
+// структура хранения результатов
 struct ResultToPrint {
     char* name;      // название функции
     double i_sum;    // численно рассчитанный интеграл
@@ -123,7 +124,7 @@ double integrationByRectangle(TPF f, double a, double b, double eps, int& n) {
         }
         I2 *= h;
 
-    } while (fabs(I2 - I1) / 3 >= eps);
+    } while (fabs(I2 - I1) / 3 >= eps); // правило Рунге для оценки погрешности
 
     return I2;
 }
@@ -146,7 +147,7 @@ double integrationByTrapezoidal(TPF f, double a, double b, double eps, int& n) {
         }
         I2 *= h;
 
-    } while (fabs(I2 - I1) / 3 >= eps);
+    } while (fabs(I2 - I1) / 3 >= eps); // правило Рунге для метожа трапеций
 
     return I2;
 }
@@ -161,10 +162,12 @@ int main() {
     const double a = 0.0;
     const double b = 1.0;
 
+    // Массив указателей на подынтегральные функции
     TPF funcs[] = { f1, f2, f3, f4 };
 
     const char* names[] = { "f1(x)=x", "f2(x)=sin(22x)", "f3(x)=x^4", "f4(x)=arctg(x)" };
 
+    // точные значения интегралов на интервале [0, 1]
     double exact[] = {
         0.5,
         (1.0 - cos(22.0)) / 22.0,
@@ -176,6 +179,7 @@ int main() {
     int numEps = 5;
     int numFuncs = 4;
 
+    // динамическое выделение массива структур для хранения рез.
     ResultToPrint* results = new ResultToPrint[numFuncs];
 
     cout << "МЕТОД ПРЯМОУГОЛЬНИКОВ" << endl << endl;
@@ -190,12 +194,15 @@ int main() {
 
             results[j].i_toch = exact[j];
             int n = 0;
+
+            // численное интегрирование методом прямоугольников
             results[j].i_sum = integrationByRectangle(funcs[j], a, b, eps, n);
             results[j].n = n;
         }
 
         printTabl(results, numFuncs);
 
+        // освобождение памяти
         for (int j = 0; j < numFuncs; j++) {
             delete[] results[j].name;
         }
