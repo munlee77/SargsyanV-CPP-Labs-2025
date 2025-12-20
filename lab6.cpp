@@ -6,11 +6,11 @@
 using namespace std;
 
 // Константы для оформления таблицы
-const int numberOfTableColumns = 4;
-const int firstColumnWidth = 20;
-const int secondColumnWidth = 18;
-const int thirdColumnWidth = 18;
-const int fourthColumnWidth = 12;
+const int knumberOfTableColumns = 4;
+const int kfirstColumnWidth = 20;
+const int ksecondColumnWidth = 18;
+const int kthirdColumnWidth = 18;
+const int kfourthColumnWidth = 12;
 
 // Символы рамки в UTF-8
 const char* ul = "┌";
@@ -35,11 +35,11 @@ struct ResultToPrint {
 // Функция для печати горизонтальной линии таблицы
 void printHorizontalLine(int col_widths[], const char* left, const char* middle, const char* right) {
     cout << left;
-    for (int j = 0; j < numberOfTableColumns; j++) {
+    for (int j = 0; j < knumberOfTableColumns; j++) {
         for (int k = 0; k < col_widths[j] + 2; k++) {
             cout << hz;
         }
-        if (j < numberOfTableColumns - 1) {
+        if (j < knumberOfTableColumns - 1) {
             cout << middle;
         }
     }
@@ -48,19 +48,19 @@ void printHorizontalLine(int col_widths[], const char* left, const char* middle,
 
 // Функция вывода таблицы (исправленная версия)
 void printTabl(ResultToPrint* i_prn, int countRowOfTable) {
-    int widthOfTableColumns[numberOfTableColumns] = {
-        firstColumnWidth, secondColumnWidth,
-        thirdColumnWidth, fourthColumnWidth
+    int widthOfTableColumns[knumberOfTableColumns] = {
+        kfirstColumnWidth, ksecondColumnWidth,
+        kthirdColumnWidth, kfourthColumnWidth
     };
 
-    char title[numberOfTableColumns][50] = {
+    char title[knumberOfTableColumns][50] = {
         "Function", "Integral", "IntSum", "N"
     };
 
     printHorizontalLine(widthOfTableColumns, ul, Td, ur);
 
     cout << vt;
-    for (int j = 0; j < numberOfTableColumns; j++) {
+    for (int j = 0; j < knumberOfTableColumns; j++) {
         int title_len = strlen(title[j]);
         int left_spaces = (widthOfTableColumns[j] - title_len) / 2;
         int right_spaces = widthOfTableColumns[j] - title_len - left_spaces;
