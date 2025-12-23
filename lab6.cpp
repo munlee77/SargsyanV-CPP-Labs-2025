@@ -1,18 +1,18 @@
 #include <iostream>
-#include <cmath>
-#include <iomanip>
-#include <cstring>
+#include <cmath> // для мат. функций
+#include <iomanip> // форматирование cin/cout
+#include <cstring> // с-строки (вместо string -> массивы char)
 
 using namespace std;
 
-// Константы для оформления таблицы
+// константы для оформления таблицы
 const int knumberOfTableColumns = 4;
 const int kfirstColumnWidth = 20;
 const int ksecondColumnWidth = 18;
 const int kthirdColumnWidth = 18;
 const int kfourthColumnWidth = 12;
 
-// Символы рамки в UTF-8
+// символы рамки в UTF-8
 const char* ul = "┌";
 const char* ur = "┐";
 const char* dl = "└";
@@ -33,7 +33,7 @@ struct ResultToPrint {
     int n;           // число разбиений
 };
 
-// Функция для вычисления количества знаков после запятой на основе eps
+// функция для вычисления количества знаков после запятой на основе eps
 int getPrecisionFromEps(double eps) {
     if (eps >= 0.1) return 1;
     else if (eps >= 0.01) return 2;
@@ -43,13 +43,13 @@ int getPrecisionFromEps(double eps) {
     else return 6;  // для eps = 0.000001
 }
 
-// Функция для корректного вывода eps
+// функция для корректного вывода eps
 void printEps(double eps) {
     int precision = getPrecisionFromEps(eps);
     cout << fixed << setprecision(precision) << eps;
 }
 
-// Функция для печати горизонтальной линии таблицы
+// функция для печати горизонтальной линии таблицы
 void printHorizontalLine(int col_widths[], const char* left, const char* middle, const char* right) {
     cout << left;
     for (int j = 0; j < knumberOfTableColumns; j++) {
@@ -69,7 +69,7 @@ void printTabl(ResultToPrint* i_prn, int countRowOfTable, double eps) {
         kfirstColumnWidth, ksecondColumnWidth,
         kthirdColumnWidth, kfourthColumnWidth
     };
-
+    // заголовки значений таблицы
     char title[knumberOfTableColumns][50] = {
         "Function", "Integral", "IntSum", "N"
     };
@@ -197,8 +197,8 @@ int main() {
     };
 
     double epsilons[] = { 0.01, 0.001, 0.0001, 0.00001, 0.000001 };
-    int numEps = 5;
-    int numFuncs = 4;
+    const int numEps = 5;
+    const int numFuncs = 4;
 
     // динамическое выделение массива структур для хранения рез.
     ResultToPrint* results = new ResultToPrint[numFuncs];
@@ -212,7 +212,7 @@ int main() {
         cout << endl;
 
         for (int j = 0; j < numFuncs; j++) {
-            // выделение памяти и копирование названия ф-ции
+            // выделение памяти для строки
             results[j].name = new char[strlen(names[j]) + 1];
             strcpy(results[j].name, names[j]);
 
