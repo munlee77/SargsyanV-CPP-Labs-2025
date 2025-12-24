@@ -28,7 +28,7 @@ const char* Tl = "┤";
 // структура хранения результатов
 struct ResultToPrint {
     char* name;      // название функции
-    double i_sum;    // численно рассчитанный интеграл
+    double i_sum;    // вычисленное значение
     double i_toch;   // точное значение интеграла
     int n;           // число разбиений
 };
@@ -180,8 +180,11 @@ double f3(double x) { return pow(x, 4); }
 double f4(double x) { return atan(x); }
 
 int main() {
-    const double a = 0.0;
-    const double b = 1.0;
+    double a = 0.0;
+    double b = 1.0;
+    cout << "Введите нижний (a) и верхний (b) пределы\n";
+    cin >> a;
+    cin >> b;
 
     // Массив указателей на подынтегральные функции
     TPF funcs[] = { f1, f2, f3, f4 };
@@ -190,18 +193,25 @@ int main() {
 
     // точные значения интегралов на интервале [0, 1]
     double exact[] = {
-        0.5,
-        (1.0 - cos(22.0)) / 22.0,
-        0.2,
-        atan(1.0) - 0.5 * log(2.0)
+        0.5 * (b*b - a*a),
+        (cos(22*a) - cos(22*b)) / 22.0,
+        (pow(b, 5) - pow(a, 5)) / 5.0,
+        b*atan(b) - a*atan(a) - 0.5*log((b*b + 1)/(a*a + 1))
     };
 
     double epsilons[] = { 0.01, 0.001, 0.0001, 0.00001, 0.000001 };
     const int numEps = 5;
     const int numFuncs = 4;
 
-    // динамическое выделение массива структур для хранения рез.
+    // динамическое выделение памяти для массива структур
     ResultToPrint* results = new ResultToPrint[numFuncs];
+
+    for (int j = 0; j < numFuncs; j++) {
+        // выделение памяти для названия функции (только один раз!)
+        results[j].name = new char[strlen(names[j]) + 1];
+        strcpy(results[j].name, names[j]);
+        results[j].i_toch = exact[j];  // точное значение вычисляется один раз
+    }
 
     cout << "МЕТОД ПРЯМОУГОЛЬНИКОВ" << endl << endl;
 
@@ -210,28 +220,18 @@ int main() {
         cout << "Точность eps = ";
         printEps(eps);  // Используем функцию для корректного вывода eps
         cout << endl;
-
+        // заполнение массива results данными
         for (int j = 0; j < numFuncs; j++) {
-            // выделение памяти для строки
-            results[j].name = new char[strlen(names[j]) + 1];
-            strcpy(results[j].name, names[j]);
-
-            results[j].i_toch = exact[j];
+            // выделение памяти для названия функции
             int n = 0;
-
             // численное интегрирование методом прямоугольников
             results[j].i_sum = integrationByRectangle(funcs[j], a, b, eps, n);
             results[j].n = n;
         }
-
-        // Передаем eps в функцию печати таблицы
         printTabl(results, numFuncs, eps);
-
-        // освобождение памяти
-        for (int j = 0; j < numFuncs; j++) {
-            delete[] results[j].name;
-        }
     }
+
+
 
     // ТЕПЕРЬ МЕТОД ТРАПЕЦИЙ
     cout << "МЕТОД ТРАПЕЦИЙ" << endl << endl;
@@ -243,10 +243,10 @@ int main() {
         cout << endl;
 
         for (int j = 0; j < numFuncs; j++) {
-            results[j].name = new char[strlen(names[j]) + 1];
-            strcpy(results[j].name, names[j]);
+          //  results[j].name = new char[strlen(names[j]) + 1];
+           // strcpy(results[j].name, names[j]);
 
-            results[j].i_toch = exact[j];
+           // results[j].i_toch = exact[j];
             int n = 0;
 
             // численное интегрирование методом трапеций
@@ -256,11 +256,15 @@ int main() {
 
         printTabl(results, numFuncs, eps);
 
-        for (int j = 0; j < numFuncs; j++) {
-            delete[] results[j].name;
-        }
+       // for (int j = 0; j < numFuncs; j++) {
+         //   delete[] results[j].name;
+        //}
     }
 
+    for (int j = 0; j < numFuncs; j++) {
+        delete[] results[j].name;
+    }
+    // освобождение памяти массива results
     delete[] results;
     return 0;
 }
