@@ -11,7 +11,7 @@ const double kCoefficient = 2.0;
 const double kRootDegree = 0.25;
 const double kDerivativeConstant = 1.0 / 8.0;
 const double kRootDegreeDerivative = -0.75;
-const double kIterationLambda = 0.5;
+const double kHalfDivisor = 2.0;
 
 // функция
 [[nodiscard]] double CalculateF(double x, double k) {
@@ -28,11 +28,6 @@ const double kIterationLambda = 0.5;
     return sin(x) - pow(x / kCoefficient + kCoefficient, kRootDegree) + kCoefficient;
 }
 
-// итерационная функция для нового уравнения
-[[nodiscard]] double CalculateIterationF_New(double x) {
-    return x - kIterationLambda * CalculateF_New(x);
-}
-
 // производная функции
 [[nodiscard]] double CalculateDerivativeF(double x, double k) {
     return 1 + k * sin(x);
@@ -47,99 +42,92 @@ const double kIterationLambda = 0.5;
     return cos(x) - (kDerivativeConstant)*pow(x / kCoefficient + kCoefficient, kRootDegreeDerivative);
 }
 
-[[nodiscard]] bool IsFunctionsSignsEqual_New(double left, double right) {
-    return ((CalculateF_New(left) > 0.) == (CalculateF_New(right) > 0.));
-}
-
 [[nodiscard]] int ConvertAccuracyToPrecision(double accuracy) {
     double epsilon = log10(accuracy);
     int precision = static_cast<int>(epsilon);
     return abs(precision);
 }
 
+// Ввод точности
 [[nodiscard]] double EnterAccuracy() {
     double accuracy{};
-
-    cout << "Введите погрешность" << '\n';
+    cout << "Введите погрешность: ";
     cin >> accuracy;
-
     return accuracy;
 }
 
+// Ввод коэффициента (только для первого уравнения)
 [[nodiscard]] double EnterCoefficient() {
     double coefficient{};
-
-    cout << "Введите коеффициент перед косинусом" << '\n';
+    cout << "Введите коэффициент перед косинусом (k): ";
     cin >> coefficient;
-
     return coefficient;
 }
 
+// Ввод начального приближения
 [[nodiscard]] double EnterX() {
     double x0{};
-
-    cout << "Введите x0 цифрами" << '\n';
+    cout << "Введите начальное приближение x0: ";
     cin >> x0;
-
     return x0;
 }
 
+// Ввод начала диапазона
 [[nodiscard]] double EnterBeginRange() {
     double left{};
-
-    cout << "Введите начало диапазона цифрами" << '\n';
+    cout << "Введите начало диапазона: ";
     cin >> left;
-
     return left;
 }
 
+// Ввод конца диапазона
 [[nodiscard]] double EnterEndRange() {
     double right{};
-
-    cout << "Введите конец диапазона цифрами" << '\n';
+    cout << "Введите конец диапазона: ";
     cin >> right;
-
     return right;
 }
 
+// Ввод метода решения
 [[nodiscard]] int EnterMethod() {
     int method{};
-
-    cout << "Введите номер метода, которым хотите найти корень" << '\n';
-    cout << "1. Нахождение корня методом итераций" << '\n'
-         << "2. Нахождение корня методом Ньютона" << '\n'
-         << "3. Нахождение корня методом половинного деления" << '\n';
+    cout << "\n ВЫБОР МЕТОДА " << endl;
+    cout << "1. Метод простых итераций" << endl;
+    cout << "2. Метод Ньютона" << endl;
+    cout << "3. Метод половинного деления" << endl;
+    cout << "Введите номер метода: ";
     cin >> method;
-
     return method;
 }
 
+// Выбор уравнения (только для методов Ньютона и половинного деления)
 [[nodiscard]] int ChooseEquationType() {
     int choice{};
-    cout << "Выберите уравнение:\n";
-    cout << "1. Оригинальное (x - k*cos(x) = 0)\n";
-    cout << "2. Новое (sin(x) - (x/2+2)^(1/4) + 2 = 0)\n";
+    cout << "\n ВЫБОР УРАВНЕНИЯ " << endl;
+    cout << "1. x - k*cos(x) = 0" << endl;
+    cout << "2. sin(x) - (x/2+2)^(1/4) + 2 = 0" << endl;
+    cout << "Введите номер уравнения: ";
     cin >> choice;
     return choice;
 }
 
+// Запрос на продолжение
 [[nodiscard]] char EnterContinueExecution() {
     char continueExecution{};
-
-    cout << "Хотите продолжить? Введите [y/n]: ";
+    cout << "\nХотите продолжить? (y/n): ";
     cin >> continueExecution;
-
     return continueExecution;
 }
 
-// вывод результатов решения
+// Вывод результатов решения
 void PrintEquationResult(NonLinearEquation::EquationResult rez, double accuracy) {
     if (!rez.solution) {
-        cerr << "Программа не смогла найти корень c заданными данными" << endl;
-        exit(1);
+        cerr << "\nОШИБКА: Не удалось найти корень с заданными параметрами" << endl;
+        return;
     }
-    cout << fixed << setprecision(ConvertAccuracyToPrecision(accuracy)) << "Корень " << rez.root << '\t' << "Количество итераций " << rez.iterations
-         << '\n';
+    cout << fixed << setprecision(ConvertAccuracyToPrecision(accuracy)) << "\nРЕЗУЛЬТАТ:" << endl
+         << "Корень: " << rez.root << endl
+         << "Количество итераций: " << rez.iterations << endl;
 }
 }  // namespace
 
@@ -148,11 +136,14 @@ namespace NonLinearEquation {
 void StartApp() {
     char continueExecution = 'y';
 
-    while (continueExecution == 'y') {
-        ChooseTask();
+    cout << " РЕШЕНИЕ НЕЛИНЕЙНЫХ УРАВНЕНИЙ " << endl;
 
+    while (continueExecution == 'y' || continueExecution == 'Y') {
+        ChooseTask();
         continueExecution = EnterContinueExecution();
     }
+
+    cout << "\nПрограмма завершена. До свидания!" << endl;
 }
 
 // меню выбора метода
@@ -170,42 +161,36 @@ void ChooseTask() {
             StartHalfDivisionMethod();
             break;
         default:
-            cout << "Неверно введены данные" << '\n';
+            cerr << "ОШИБКА: Неверный номер метода. Допустимые значения: 1, 2, 3." << endl;
             exit(1);
     }
 }
 
-// МЕТОД ИТЕРАЦИЙ
+// МЕТОД ИТЕРАЦИЙ (ТОЛЬКО ДЛЯ ПЕРВОГО УРАВНЕНИЯ)
 void StartIterationMethod() {
-    int eqChoice = ChooseEquationType();
-    if (eqChoice == 1) {
-        double coefficient = EnterCoefficient();
-        double accuracy = EnterAccuracy();
-        double x0 = EnterX();
-        EquationResult result = CalculateIterationMethod(coefficient, accuracy, x0);
-        PrintEquationResult(result, accuracy);
-    } else if (eqChoice == 2) {
-        double accuracy = EnterAccuracy();
-        double x0 = EnterX();
-        EquationResult result = CalculateIterationMethodNewEquation(accuracy, x0);
-        PrintEquationResult(result, accuracy);
-    } else {
-        cerr << "Неверный выбор уравнения\n";
-        exit(1);
-    }
+    cout << "\n МЕТОД ПРОСТЫХ ИТЕРАЦИЙ " << endl;
+    cout << "Уравнение: x - k*cos(x) = 0" << endl;
+
+    // Только первое уравнение - коэффициент, точность, начальное приближение
+    double coefficient = EnterCoefficient();
+    double accuracy = EnterAccuracy();
+    double x0 = EnterX();
+
+    EquationResult result = CalculateIterationMethod(coefficient, accuracy, x0);
+    PrintEquationResult(result, accuracy);
 }
 
-EquationResult CalculateIterationMethod(double сoefficient, double accuracy, double x0) {
+EquationResult CalculateIterationMethod(double coefficient, double accuracy, double x0) {
     EquationResult res;
-    res.root = CalculateIterationF(x0, сoefficient);
+    res.root = CalculateIterationF(x0, coefficient);
 
     while (fabs(res.root - x0) > accuracy) {
-        if (res.iterations == kMaxIterations) {
+        if (res.iterations >= kMaxIterations) {
             res.solution = false;
             break;
         }
         x0 = res.root;
-        res.root = CalculateIterationF(x0, сoefficient);
+        res.root = CalculateIterationF(x0, coefficient);
         ++res.iterations;
     }
 
@@ -215,42 +200,26 @@ EquationResult CalculateIterationMethod(double сoefficient, double accuracy, do
     return res;
 }
 
-EquationResult CalculateIterationMethodNewEquation(double accuracy, double x0) {
-    EquationResult res;
-    res.root = CalculateIterationF_New(x0);
-
-    while (fabs(res.root - x0) > accuracy) {
-        if (res.iterations == kMaxIterations) {
-            res.solution = false;
-            break;
-        }
-        x0 = res.root;
-        res.root = CalculateIterationF_New(x0);
-        ++res.iterations;
-    }
-
-    if (fabs(res.root - x0) > accuracy) {
-        res.solution = false;
-    }
-    return res;
-}
-
-// МЕТОД НЬЮТОНА
+// МЕТОД НЬЮТОНА (ДЛЯ ОБОИХ УРАВНЕНИЙ)
 void StartNewtonMethod() {
+    cout << "\n МЕТОД НЬЮТОНА " << endl;
     int eqChoice = ChooseEquationType();
+
     if (eqChoice == 1) {
+        // Для первого уравнения: x - k*cos(x) = 0
         double coefficient = EnterCoefficient();
         double accuracy = EnterAccuracy();
         double x0 = EnterX();
         EquationResult result = CalculateNewtonMethod(coefficient, accuracy, x0);
         PrintEquationResult(result, accuracy);
     } else if (eqChoice == 2) {
+        // Для второго уравнения: sin(x) - (x/2+2)^(1/4) + 2 = 0
         double accuracy = EnterAccuracy();
         double x0 = EnterX();
         EquationResult result = CalculateNewtonMethodNewEquation(accuracy, x0);
         PrintEquationResult(result, accuracy);
     } else {
-        cerr << "Неверный выбор уравнения\n";
+        cerr << "ОШИБКА: Неверный выбор уравнения. Допустимые значения: 1, 2." << endl;
         exit(1);
     }
 }
@@ -282,8 +251,17 @@ EquationResult CalculateNewtonMethod(double coefficient, double accuracy, double
 
 EquationResult CalculateNewtonMethodNewEquation(double accuracy, double x0) {
     EquationResult res;
+
+    // ПРОСТО вычисляем
     res.root = x0 - (CalculateF_New(x0) / CalculateDerivativeF_New(x0));
 
+    if (std::isnan(res.root)) {
+        cerr << "ОШИБКА: Не удалось вычислить." << endl;
+        res.solution = false;
+        return res;
+    }
+
+    // Обычный цикл метода Ньютона
     while (fabs(res.root - x0) > accuracy) {
         if (res.iterations >= kMaxIterations) {
             res.solution = false;
@@ -291,6 +269,12 @@ EquationResult CalculateNewtonMethodNewEquation(double accuracy, double x0) {
         }
         x0 = res.root;
         double derivative = CalculateDerivativeF_New(x0);
+
+        if (std::isnan(derivative)) {
+            res.solution = false;
+            break;
+        }
+
         if (fabs(derivative) < kDivisionThreshold) {
             res.solution = false;
             break;
@@ -299,16 +283,19 @@ EquationResult CalculateNewtonMethodNewEquation(double accuracy, double x0) {
         ++res.iterations;
     }
 
-    if (fabs(res.root - x0) > accuracy) {
+    if (fabs(res.root - x0) > accuracy || std::isnan(res.root)) {
         res.solution = false;
     }
     return res;
 }
 
-// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ
+// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ (ДЛЯ ОБОИХ УРАВНЕНИЙ)
 void StartHalfDivisionMethod() {
+    cout << "\n МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ " << endl;
     int eqChoice = ChooseEquationType();
+
     if (eqChoice == 1) {
+        // Для первого уравнения: x - k*cos(x) = 0
         double coefficient = EnterCoefficient();
         double accuracy = EnterAccuracy();
         double left = EnterBeginRange();
@@ -316,72 +303,102 @@ void StartHalfDivisionMethod() {
         EquationResult result = CalculateHalfDivisionMethod(coefficient, accuracy, left, right);
         PrintEquationResult(result, accuracy);
     } else if (eqChoice == 2) {
+        // Для второго уравнения: sin(x) - (x/2+2)^(1/4) + 2 = 0
         double accuracy = EnterAccuracy();
         double left = EnterBeginRange();
         double right = EnterEndRange();
         EquationResult result = CalculateHalfDivisionMethodNewEquation(accuracy, left, right);
         PrintEquationResult(result, accuracy);
     } else {
-        cerr << "Неверный выбор уравнения\n";
+        cerr << "ОШИБКА: Неверный выбор уравнения. Допустимые значения: 1, 2." << endl;
         exit(1);
     }
 }
 
-EquationResult CalculateHalfDivisionMethod(double сoefficient, double accuracy, double left, double right) {
+EquationResult CalculateHalfDivisionMethod(double coefficient, double accuracy, double left, double right) {
     EquationResult res;
+
     if (left > right) {
         swap(left, right);
+        cout << "Замечание: Границы интервала были поменяны местами." << endl;
     }
 
-    if (IsFunctionsSignsEqual(left, right, сoefficient) == true) {
+    if (IsFunctionsSignsEqual(left, right, coefficient)) {
+        cerr << "ОШИБКА: На концах интервала функция имеет одинаковые знаки." << endl;
         res.solution = false;
         return res;
     }
 
-    int iterations{};
-    double x{};
+    while (right - left > accuracy && res.iterations < kMaxIterations) {
+        double mid = (left + right) / kHalfDivisor;
 
-    while (right - left > accuracy) {
-        x = (right + left) / 2;
-
-        if (IsFunctionsSignsEqual(x, right, сoefficient) == false) {
-            left = x;
+        if (CalculateF(left, coefficient) * CalculateF(mid, coefficient) <= 0) {
+            right = mid;
         } else {
-            right = x;
+            left = mid;
         }
-        ++iterations;
+        ++res.iterations;
     }
-    res.root = (right + left) / 2;
-    res.iterations = iterations;
+
+    if (res.iterations >= kMaxIterations) {
+        res.solution = false;
+        return res;
+    }
+
+    res.root = (left + right) / kHalfDivisor;
     return res;
 }
 
 EquationResult CalculateHalfDivisionMethodNewEquation(double accuracy, double left, double right) {
     EquationResult res;
+
     if (left > right) {
         swap(left, right);
+        cout << "Замечание: Границы интервала были поменяны местами." << endl;
     }
-    if (IsFunctionsSignsEqual_New(left, right)) {
+
+    double f_left = CalculateF_New(left);
+    double f_right = CalculateF_New(right);
+
+    if (std::isnan(f_left) || std::isnan(f_right)) {
+        cerr << "\nОШИБКА: Функция не определена на границах интервала!" << endl;
         res.solution = false;
         return res;
     }
 
-    double x{};
+    if (f_left * f_right > 0) {
+        cerr << "\nОШИБКА: Функция имеет одинаковые знаки на концах интервала!" << endl;
+        res.solution = false;
+        return res;
+    }
+
     while (right - left > accuracy) {
         if (res.iterations >= kMaxIterations) {
+            cerr << "\nОШИБКА: Достигнуто максимальное количество итераций (" << kMaxIterations << ")" << endl;
             res.solution = false;
-            break;
+            return res;
         }
-        x = (left + right) / kCoefficient;
-        if (IsFunctionsSignsEqual_New(x, right)) {
-            right = x;
+
+        double mid = (left + right) / kHalfDivisor;
+        double f_mid = CalculateF_New(mid);
+
+        if (std::isnan(f_mid)) {
+            cerr << "\nОШИБКА: Функция не определена в точке x = " << mid << endl;
+            res.solution = false;
+            return res;
+        }
+
+        if (f_left * f_mid <= 0) {
+            right = mid;
         } else {
-            left = x;
+            left = mid;
+            f_left = f_mid;
         }
+
         ++res.iterations;
     }
-    res.root = (left + right) / kCoefficient;
+
+    res.root = (left + right) / kHalfDivisor;
     return res;
 }
 }  // namespace NonLinearEquation
-   // namespace NonLinearEquation

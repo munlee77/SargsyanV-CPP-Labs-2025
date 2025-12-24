@@ -6,17 +6,12 @@
 namespace NonLinearEquation {
 
 enum class EquationMethod {
-    // метод итераций
+    // метод итераций (только для уравнения x - k*cos(x) = 0)
     Iteration = 1,
     // метод Ньютона
     Newton,
     // метод половинного деления
     HalfDivision
-};
-
-enum class EquationType {
-    Original,
-    New
 };
 
 // cтруктура для возврата результатов решения
@@ -34,17 +29,18 @@ void StartApp();
 void ChooseTask();
 
 // функции запуска методов
-void StartIterationMethod();
-void StartNewtonMethod();
-void StartHalfDivisionMethod();
+void StartIterationMethod();     // Метод итераций (только для уравнения x - k*cos(x) = 0)
+void StartNewtonMethod();        // Метод Ньютона (для обоих уравнений)
+void StartHalfDivisionMethod();  // Метод половинного деления (для обоих уравнений)
 
 // вычислительные функции (с атрибутом nodiscard)
 [[nodiscard]] EquationResult CalculateIterationMethod(double coefficient, double epsilon, double x0);
+
+// Методы для первого уравнения: x - k*cos(x) = 0
 [[nodiscard]] EquationResult CalculateNewtonMethod(double coefficient, double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateHalfDivisionMethod(double coefficient, double epsilon, double left, double right);
 
-[[nodiscard]] EquationResult CalculateIterationMethodNewEquation(double epsilon, double x0);
+// Методы для второго уравнения: sin(x) - (x/2+2)^(1/4) + 2 = 0
 [[nodiscard]] EquationResult CalculateNewtonMethodNewEquation(double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateHalfDivisionMethodNewEquation(double epsilon, double left, double right);
 }  // namespace NonLinearEquation
-// namespace NonLinearEquation
