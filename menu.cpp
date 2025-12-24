@@ -2,9 +2,9 @@
 
 using namespace std;
 
-// анонимное пространство для вспомогательных функций
+// namespace для вспомогательных функций
 namespace {
-// макс. число итераций
+
 const int kMaxIterations = 1e5;
 const double kDivisionThreshold = 1e-12;
 const double kCoefficient = 2.0;
@@ -22,6 +22,16 @@ const double kRootDegreeDerivative = -0.75;
     return k * cos(x);
 }
 
+// функция для нового уравнения
+[[nodiscard]] double CalculateF_New(double x) {
+    return sin(x) - pow(x / kCoefficient + kCoefficient, kRootDegree) + kCoefficient;
+}
+
+// итерационная функция для нового уравнения
+[[nodiscard]] double CalculateIterationF_New(double x) {
+    return x - 0.5 * CalculateF_New(x);
+}
+
 // производная функции
 [[nodiscard]] double CalculateDerivativeF(double x, double k) {
     return 1 + k * sin(x);
@@ -32,10 +42,6 @@ const double kRootDegreeDerivative = -0.75;
     return ((CalculateF(left, k) > 0.) == (CalculateF(right, k) > 0.));
 }
 
-[[nodiscard]] double CalculateF_New(double x) {
-    return sin(x) - pow(x / kCoefficient + kCoefficient, kRootDegree) + kCoefficient;
-}
-
 [[nodiscard]] double CalculateDerivativeF_New(double x) {
     return cos(x) - (kDerivativeConstant)*pow(x / kCoefficient + kCoefficient, kRootDegreeDerivative);
 }
@@ -44,14 +50,12 @@ const double kRootDegreeDerivative = -0.75;
     return ((CalculateF_New(left) > 0.) == (CalculateF_New(right) > 0.));
 }
 
-// точность кол-ва знаков
 [[nodiscard]] int ConvertAccuracyToPrecision(double accuracy) {
     double epsilon = log10(accuracy);
     int precision = static_cast<int>(epsilon);
     return abs(precision);
 }
 
-// ф-ции ввода данных
 [[nodiscard]] double EnterAccuracy() {
     double accuracy{};
 
@@ -131,15 +135,15 @@ const double kRootDegreeDerivative = -0.75;
 void PrintEquationResult(NonLinearEquation::EquationResult rez, double accuracy) {
     if (!rez.solution) {
         cerr << "Программа не смогла найти корень c заданными данными" << endl;
-        exit(0);
+        exit(1);
     }
     cout << fixed << setprecision(ConvertAccuracyToPrecision(accuracy)) << "Корень " << rez.root << '\t' << "Количество итераций " << rez.iterations
          << '\n';
 }
 }  // namespace
-// namespace
 
-// именованное пространство для имён и функций
+
+// namespace для имён и функций
 namespace NonLinearEquation {
 void StartApp() {
     char continueExecution = 'y';
@@ -167,19 +171,28 @@ void ChooseTask() {
             break;
         default:
             cout << "Неверно введены данные" << '\n';
-            exit(0);
+            exit(1);
     }
 }
 
 // МЕТОД ИТЕРАЦИЙ
 void StartIterationMethod() {
-    double сoefficient = EnterCoefficient();
-    double accuracy = EnterAccuracy();
-    double x0 = EnterX();
-
-    EquationResult result = CalculateIterationMethod(сoefficient, accuracy, x0);
-
-    PrintEquationResult(result, accuracy);
+    int eqChoice = ChooseEquationType();
+    if (eqChoice == 1) {
+        double coefficient = EnterCoefficient();
+        double accuracy = EnterAccuracy();
+        double x0 = EnterX();
+        EquationResult result = CalculateIterationMethod(coefficient, accuracy, x0);
+        PrintEquationResult(result, accuracy);
+    } else if (eqChoice == 2) {
+        double accuracy = EnterAccuracy();
+        double x0 = EnterX();
+        EquationResult result = CalculateIterationMethodNewEquation(accuracy, x0);
+        PrintEquationResult(result, accuracy);
+    } else {
+        cerr << "Неверный выбор уравнения\n";
+        exit(1);
+    }
 }
 
 EquationResult CalculateIterationMethod(double сoefficient, double accuracy, double x0) {
@@ -202,7 +215,27 @@ EquationResult CalculateIterationMethod(double сoefficient, double accuracy, do
     return res;
 }
 
-// МЕТОД НЬЮТОНА (для обоих уравнений)
+EquationResult CalculateIterationMethodNewEquation(double accuracy, double x0) {
+    EquationResult res;
+    res.root = CalculateIterationF_New(x0);
+
+    while (fabs(res.root - x0) > accuracy) {
+        if (res.iterations == kMaxIterations) {
+            res.solution = false;
+            break;
+        }
+        x0 = res.root;
+        res.root = CalculateIterationF_New(x0);
+        ++res.iterations;
+    }
+
+    if (fabs(res.root - x0) > accuracy) {
+        res.solution = false;
+    }
+    return res;
+}
+
+// МЕТОД НЬЮТОНА
 void StartNewtonMethod() {
     int eqChoice = ChooseEquationType();
     if (eqChoice == 1) {
@@ -218,7 +251,7 @@ void StartNewtonMethod() {
         PrintEquationResult(result, accuracy);
     } else {
         cerr << "Неверный выбор уравнения\n";
-        exit(0);
+        exit(1);
     }
 }
 
@@ -272,7 +305,7 @@ EquationResult CalculateNewtonMethodNewEquation(double accuracy, double x0) {
     return res;
 }
 
-// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ (для обоих уравнений)
+// МЕТОД ПОЛОВИННОГО ДЕЛЕНИЯ
 void StartHalfDivisionMethod() {
     int eqChoice = ChooseEquationType();
     if (eqChoice == 1) {
@@ -290,7 +323,7 @@ void StartHalfDivisionMethod() {
         PrintEquationResult(result, accuracy);
     } else {
         cerr << "Неверный выбор уравнения\n";
-        exit(0);
+        exit(1);
     }
 }
 

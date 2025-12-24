@@ -43,6 +43,7 @@ void StartHalfDivisionMethod();
 [[nodiscard]] EquationResult CalculateNewtonMethod(double coefficient, double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateHalfDivisionMethod(double coefficient, double epsilon, double left, double right);
 
+[[nodiscard]] EquationResult CalculateIterationMethodNewEquation(double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateNewtonMethodNewEquation(double epsilon, double x0);
 [[nodiscard]] EquationResult CalculateHalfDivisionMethodNewEquation(double epsilon, double left, double right);
 }  // namespace NonLinearEquation
