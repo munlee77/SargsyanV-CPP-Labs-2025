@@ -11,6 +11,7 @@ const double kCoefficient = 2.0;
 const double kRootDegree = 0.25;
 const double kDerivativeConstant = 1.0 / 8.0;
 const double kRootDegreeDerivative = -0.75;
+const double kIterationLambda = 0.5;
 
 // функция
 [[nodiscard]] double CalculateF(double x, double k) {
@@ -29,7 +30,7 @@ const double kRootDegreeDerivative = -0.75;
 
 // итерационная функция для нового уравнения
 [[nodiscard]] double CalculateIterationF_New(double x) {
-    return x - 0.5 * CalculateF_New(x);
+    return x - kIterationLambda * CalculateF_New(x);
 }
 
 // производная функции
@@ -141,7 +142,6 @@ void PrintEquationResult(NonLinearEquation::EquationResult rez, double accuracy)
          << '\n';
 }
 }  // namespace
-
 
 // namespace для имён и функций
 namespace NonLinearEquation {
