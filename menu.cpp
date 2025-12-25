@@ -219,7 +219,7 @@ void StartNewtonMethod() {
         EquationResult result = CalculateNewtonMethodNewEquation(accuracy, x0);
         PrintEquationResult(result, accuracy);
     } else {
-        cerr << "ОШИБКА: Неверный выбор уравнения. Допустимые значения: 1, 2." << endl;
+        cerr << "Неверный выбор уравнения" << endl;
         exit(1);
     }
 }
@@ -310,7 +310,7 @@ void StartHalfDivisionMethod() {
         EquationResult result = CalculateHalfDivisionMethodNewEquation(accuracy, left, right);
         PrintEquationResult(result, accuracy);
     } else {
-        cerr << "ОШИБКА: Неверный выбор уравнения. Допустимые значения: 1, 2." << endl;
+        cerr << "ОШИБКА: Неверный выбор уравнения." << endl;
         exit(1);
     }
 }
