@@ -14,6 +14,8 @@ const bool kSwitchMin = false;
 const bool kSwitchMax = true;
 // нач. индекс для всех циклов
 const size_t kLoopStart = 0;
+const size_t kMultiplierTen = 10;
+const size_t kMultiplierOne = 1;
 
 // генератор рандом чисел для массива
 void CreateRandomArray(int* sourceArray, size_t arraySize) {
@@ -114,7 +116,6 @@ void TableOutput(int* array, size_t arraySize, int permutationsNumber, int compa
 namespace InterfaceFunctions {
 // запуск приложения
 void LaunchApp() {
-    // продолжение работы приложения
     char continueExecution = 'y';
     while (continueExecution == 'y') {
         Menu();
@@ -122,7 +123,6 @@ void LaunchApp() {
         cout << "Продолжить (y/n)?" << endl;
         cin >> continueExecution;
 
-        // проверка корректности ввода
         if (continueExecution != 'y' && continueExecution != 'n') {
             cout << "Введены неверные данные" << endl;
             exit(0);
@@ -211,9 +211,9 @@ void DynamicArrayOutput() {
         size_t currentSize = dynamicArrayElementsNumber * multiplier;
 
         cout << "\nРабота с массивом размером " << currentSize;
-        if (multiplier == 1) {
+        if (multiplier == kMultiplierOne) {
             cout << " (исходный размер)" << endl;
-        } else if (multiplier == 10) {
+        } else if (multiplier == kMultiplierTen) {
             cout << " (исходный * 10)" << endl;
         } else {
             cout << " (исходный * 100)" << endl;
@@ -229,13 +229,11 @@ void DynamicArrayOutput() {
 
         // сортировка выбором
         SelectionSort(sourceArray, currentSize, kSwitchMin, permutationsNumber, comparisonsNumber);
-        cout << "Сортировка выбором: перестановок = " << permutationsNumber
-             << ", сравнений = " << comparisonsNumber << endl;
+        cout << "Сортировка выбором: перестановок = " << permutationsNumber << ", сравнений = " << comparisonsNumber << endl;
 
         // сортировка пузырьком
         BubbleSort(cloneArray, currentSize, kSwitchMin, permutationsNumber, comparisonsNumber);
-        cout << "Сортировка пузырьком: перестановок = " << permutationsNumber
-             << ", сравнений = " << comparisonsNumber << endl;
+        cout << "Сортировка пузырьком: перестановок = " << permutationsNumber << ", сравнений = " << comparisonsNumber << endl;
 
         // освобождение памяти
         delete[] sourceArray;
