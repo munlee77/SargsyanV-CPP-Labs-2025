@@ -6,14 +6,10 @@
 namespace InterfaceFunctions {
 enum class ArrayType {
     staticArr = 1,
-    dynamicArr,
-    exit,
+    dynamicArr = 2,
+    exit = 3,
 };
 
-// Объявления функций:
-
-// Алгоритм сортировки выбором
-// Параметры:
 // int* - указатель на массив
 // size_t - размер массива
 // bool - флаг направления сортировки (true - по убыванию, false - по возрастанию)
