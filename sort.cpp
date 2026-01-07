@@ -16,6 +16,7 @@ const bool kSwitchMax = true;
 const size_t kLoopStart = 0;
 const size_t kMultiplierTen = 10;
 const size_t kMultiplierOne = 1;
+const int kcounterInitialValue = 0;
 
 // генератор рандом чисел для массива
 void CreateRandomArray(int* sourceArray, size_t arraySize) {
@@ -269,7 +270,6 @@ void SelectionSort(int* arrSelection, size_t arraySize, bool switchMinMax, int& 
 
 // алгоритм сортировки пузырьком
 void BubbleSort(int* arrBubble, size_t arraySize, bool switchMinMax, int& permutationsNumber, int& comparisionsNumber) {
-    const int kcounterInitialValue = 0;
     int counter = 1;
     permutationsNumber = 0;
     comparisionsNumber = 0;
