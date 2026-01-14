@@ -157,7 +157,6 @@ double integrationByRectangle(TPF f, double a, double b, double eps, int& n) {
     n = 1;
     I2 = 0.0;
 
-    // Заменяем do-while на while
     while (true) {
         I1 = I2;
         n *= 2;
@@ -187,7 +186,6 @@ double integrationByTrapezoidal(TPF f, double a, double b, double eps, int& n) {
     n = 1;
     I2 = 0.0;
 
-    // Заменяем do-while на while
     while (true) {
         I1 = I2;
         n *= 2;
@@ -275,7 +273,7 @@ int main() {
     // ТЕПЕРЬ МЕТОД ТРАПЕЦИЙ
     cout << "МЕТОД ТРАПЕЦИЙ" << endl << endl;
 
-    // Используем range-based for loop
+    // range-based for loop
     for (double eps : epsilons) {
         cout << "Точность eps = ";
         printEps(eps);
