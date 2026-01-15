@@ -11,7 +11,7 @@ namespace CaesarCipher {
 namespace {
 
 // Константы
-constexpr size_t kMaxWordLength = 1024;
+constexpr size_t kMaxWordLength = 6;
 constexpr size_t kBufferSize = 4096;
 constexpr size_t kPageSize = 5;
 constexpr int kASCII = 128;
@@ -44,9 +44,9 @@ struct ProgramArguments {
 
 // Динамический массив для ключей
 struct KeyArray {
-    int* data;
-    size_t size;
-    size_t capacity;
+    int* data; //указатель на массив ключей
+    size_t size; //текущее кол-во
+    size_t capacity; //вместимость массива
 };
 
 // Создание динамического массива ключей
@@ -142,17 +142,19 @@ KeyArray readKeysFromNotebook(const char* filename) {
 
     //массив для ключей
     KeyArray keys = createKeyArray(100);
+    //буферы для чтения и временного хранения слова
     char buffer[kBufferSize];
     char current_word[kMaxWordLength + 1];
     size_t word_index = 0;
     bool in_word = false;
 
+    //чтение файла
     while (file.read(buffer, kBufferSize) || file.gcount() > 0) {
         size_t bytes_read = static_cast<size_t>(file.gcount());
-
+        //обработка каждого символа
         for (size_t i = 0; i < bytes_read; ++i) {
             char c = buffer[i];
-
+            //если символ - часть слова
             if (isWordCharacter(c)) {
                 if (!in_word) {
                     in_word = true;
@@ -176,9 +178,11 @@ KeyArray readKeysFromNotebook(const char* filename) {
                                   isPunctuation(c) || c == '\r' || c == '\n')) {
                 current_word[word_index] = '\0';
                 int sum = 0;
+                //вычисление ключа
                 for (size_t j = 0; j < word_index; ++j) {
                     sum += static_cast<unsigned char>(current_word[j]);
                 }
+                //добавление ключа в массив
                 pushBackKey(keys, sum % kASCII);
                 in_word = false;
             }
