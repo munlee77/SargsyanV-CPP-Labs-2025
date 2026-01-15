@@ -19,11 +19,17 @@ constexpr size_t kMaxFileName = 256;
 
 // Структура для статистики
 struct SymbolStats {
+    //символ
     char character;
+    //код символа
     int ascii_code;
+    //кол-во раз нахождения символа
     int count;
+    //кол-во различных вариантов шифрования символа
     int encryption_variants;
+    //минимальный код зашифровки символа
     int min_encrypted_code;
+    //максимальный код зашифровки символа
     int max_encrypted_code;
     bool used_variants[kASCII] = {false};
 };
@@ -52,7 +58,7 @@ KeyArray createKeyArray(size_t initialCapacity = 100) {
     return arr;
 }
 
-// Добавление ключа в массив
+// Добавление ключа в конец динам. массива
 void pushBackKey(KeyArray& arr, int key) {
     if (arr.size >= arr.capacity) {
         size_t newCapacity = arr.capacity * 2;
@@ -79,7 +85,7 @@ struct UsedSymbolsArray {
     size_t capacity;
 };
 
-// Создание массива использованных символов
+// Создание динам. массива для использованных символов
 UsedSymbolsArray createUsedSymbolsArray(size_t initialCapacity = 128) {
     UsedSymbolsArray arr;
     arr.data = new int[initialCapacity];
@@ -88,7 +94,7 @@ UsedSymbolsArray createUsedSymbolsArray(size_t initialCapacity = 128) {
     return arr;
 }
 
-// Добавление символа в массив
+// Добавление индекса символа в массив used символов
 void pushBackUsedSymbol(UsedSymbolsArray& arr, int symbol) {
     if (arr.size >= arr.capacity) {
         size_t newCapacity = arr.capacity * 2;
@@ -101,27 +107,30 @@ void pushBackUsedSymbol(UsedSymbolsArray& arr, int symbol) {
     arr.data[arr.size++] = symbol;
 }
 
-// Освобождение памяти массива символов
+// Освобождение памяти массива used символов
 void freeUsedSymbolsArray(UsedSymbolsArray& arr) {
     delete[] arr.data;
     arr.data = nullptr;
     arr.size = arr.capacity = 0;
 }
 
-// Вспомогательные функции
+// Проверка существования файла
 bool fileExists(const char* filename) {
     std::ifstream file(filename);
     return file.good();
 }
 
+//Проверка принадлежности символа(буква/цифра) к слову
 bool isWordCharacter(char c) {
     return std::isalnum(static_cast<unsigned char>(c)) != 0;
 }
 
+//Проверка символ = знак пунктуации?
 bool isPunctuation(char c) {
     return std::ispunct(static_cast<unsigned char>(c)) != 0;
 }
 
+//Чтение ключей из код. блокнота
 KeyArray readKeysFromNotebook(const char* filename) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
@@ -131,6 +140,7 @@ KeyArray readKeysFromNotebook(const char* filename) {
         throw std::runtime_error(errorMsg);
     }
 
+    //массив для ключей
     KeyArray keys = createKeyArray(100);
     char buffer[kBufferSize];
     char current_word[kMaxWordLength + 1];
@@ -174,7 +184,7 @@ KeyArray readKeysFromNotebook(const char* filename) {
             }
         }
     }
-
+    //Если файл закончился, а слово не завершено
     if (in_word) {
         current_word[word_index] = '\0';
         int sum = 0;
@@ -192,54 +202,71 @@ KeyArray readKeysFromNotebook(const char* filename) {
     return keys;
 }
 
+//Кодирование файла и сбор статистики
 void encodeFile(const char* input_file, const char* output_file,
                 const KeyArray& keys, SymbolStats stats[]) {
     std::ifstream in(input_file, std::ios::binary);
     std::ofstream out(output_file, std::ios::binary | std::ios::trunc);
-
+    //если входной файл НЕ открылся
     if (!in) {
         char errorMsg[512];
         std::strcpy(errorMsg, "Не удалось открыть входной файл: ");
         std::strcat(errorMsg, input_file);
         throw std::runtime_error(errorMsg);
     }
+    //если выходной файл НЕ открылся
     if (!out) {
         char errorMsg[512];
         std::strcpy(errorMsg, "Не удалось создать выходной файл: ");
         std::strcat(errorMsg, output_file);
         throw std::runtime_error(errorMsg);
     }
-
+    //буфер для чтения/записи
     char buffer[kBufferSize];
+    //индекс ключа
     size_t key_index = 0;
+    //общее кол-во обработ. символов (счетчик символов)
     size_t total_symbols = 0;
 
+    //чтение входного файла
     while (in.read(buffer, kBufferSize) || in.gcount() > 0) {
+        //кол-во прочитанных байт
         size_t bytes_read = static_cast<size_t>(in.gcount());
 
+        //Обработка каждого символа в буфере
         for (size_t i = 0; i < bytes_read; ++i) {
+            //исходный символ
             unsigned char original = static_cast<unsigned char>(buffer[i]);
+            //тек. ключ
             int key = keys.data[key_index % keys.size];
-
+            //индекс символа в массиве статистики
             int symbol_index = original % kASCII;
+            //++счетчик встреч символа
             stats[symbol_index].count++;
+            //сохранение символа
             stats[symbol_index].character = static_cast<char>(original);
+            //сохранение ascii кода
             stats[symbol_index].ascii_code = original;
 
+            //шифрование символа
             unsigned char encoded = (original + key) % kASCII;
             buffer[i] = static_cast<char>(encoded);
 
+            //обновление статистики вариантов шифрования
             if (!stats[symbol_index].used_variants[encoded]) {
                 stats[symbol_index].used_variants[encoded] = true;
                 stats[symbol_index].encryption_variants++;
 
+                //если это первый вар
                 if (stats[symbol_index].encryption_variants == 1) {
                     stats[symbol_index].min_encrypted_code = encoded;
                     stats[symbol_index].max_encrypted_code = encoded;
-                } else {
+                } else { //если их уже несколько
+                    //обновление минимума
                     if (encoded < stats[symbol_index].min_encrypted_code) {
                         stats[symbol_index].min_encrypted_code = encoded;
                     }
+                    //обновление максимума
                     if (encoded > stats[symbol_index].max_encrypted_code) {
                         stats[symbol_index].max_encrypted_code = encoded;
                     }
@@ -250,51 +277,62 @@ void encodeFile(const char* input_file, const char* output_file,
             total_symbols++;
         }
 
+        //Запись зашифрованных данных в файл
         out.write(buffer, bytes_read);
     }
 
     std::cout << "Файл закодирован. Символов обработано: " << total_symbols << std::endl;
 }
 
+//Декодирование файла
 void decodeFile(const char* input_file, const char* output_file,
                 const KeyArray& keys) {
     std::ifstream in(input_file, std::ios::binary);
     std::ofstream out(output_file, std::ios::binary | std::ios::trunc);
 
+    //если входной файл НЕ открылся
     if (!in) {
         char errorMsg[512];
         std::strcpy(errorMsg, "Не удалось открыть закодированный файл: ");
         std::strcat(errorMsg, input_file);
         throw std::runtime_error(errorMsg);
     }
+    //если выходной файл НЕ открылся
     if (!out) {
         char errorMsg[512];
         std::strcpy(errorMsg, "Не удалось создать расшифрованный файл: ");
         std::strcat(errorMsg, output_file);
         throw std::runtime_error(errorMsg);
     }
-
+    //буфер для чтения/записи
     char buffer[kBufferSize];
+    //индекс тек. ключа
     size_t key_index = 0;
 
+    //Чтение закодированного файла
     while (in.read(buffer, kBufferSize) || in.gcount() > 0) {
+        //кол-во прочитнных байт
         size_t bytes_read = static_cast<size_t>(in.gcount());
-
+        //Обработка каждого символа в буфере
         for (size_t i = 0; i < bytes_read; ++i) {
+            //закодированный символ
             unsigned char encoded = static_cast<unsigned char>(buffer[i]);
+            //текущий ключ
             int key = keys.data[key_index % keys.size];
-
+            //дешифровка символа
             unsigned char decoded = (encoded - key + kASCII) % kASCII;
+            //замена символа в буфере
             buffer[i] = static_cast<char>(decoded);
             key_index++;
         }
-
+        //запись расшифрованных данных в файл
         out.write(buffer, bytes_read);
     }
 
     std::cout << "Файл расшифрован." << std::endl;
 }
 
+//Сравнение двух файлов побайтово
 bool compareFiles(const char* file1, const char* file2) {
     std::ifstream f1(file1, std::ios::binary);
     std::ifstream f2(file2, std::ios::binary);
@@ -320,16 +358,17 @@ bool compareFiles(const char* file1, const char* file2) {
     return f2.peek() == EOF;
 }
 
+//Вывод заголовка таблицы статистики
 void printHeader() {
     std::cout << std::left
-              << std::setw(12) << "Symbol"
+              << std::setw(10) << "Symbol"
               << std::setw(12) << "ASCII Code"
-              << std::setw(12) << "Count"
-              << std::setw(20) << "Encrypt Variants"
+              << std::setw(10) << "Count"
+              << std::setw(18) << "Encrypt Variants"
               << std::setw(12) << "Min Code"
               << std::setw(12) << "Max Code"
               << std::endl;
-    std::cout << std::string(80, '-') << std::endl;
+    std::cout << std::string(74, '-') << std::endl;
 }
 
 void printStatsRow(const SymbolStats& stats) {
@@ -348,15 +387,16 @@ void printStatsRow(const SymbolStats& stats) {
     }
 
     std::cout << std::left
-              << std::setw(12) << char_display
+              << std::setw(10) << char_display
               << std::setw(12) << stats.ascii_code
-              << std::setw(12) << stats.count
-              << std::setw(20) << stats.encryption_variants
+              << std::setw(10) << stats.count
+              << std::setw(18) << stats.encryption_variants
               << std::setw(12) << stats.min_encrypted_code
               << std::setw(12) << stats.max_encrypted_code
               << std::endl;
 }
 
+// Интерактивный вывод статистики с постраничной навигацией
 void interactiveStatsDisplay(SymbolStats stats[], size_t notebook_size, size_t text_length) {
     UsedSymbolsArray used_symbols = createUsedSymbolsArray(128);
 
@@ -459,6 +499,7 @@ void interactiveStatsDisplay(SymbolStats stats[], size_t notebook_size, size_t t
     freeUsedSymbolsArray(used_symbols);
 }
 
+//Парсинг (анализ) аргументов командной строки
 void parseArguments(int argc, char* argv[], ProgramArguments& args) {
     if (argc == 5) {
         std::strncpy(args.input_file, argv[1], kMaxFileName - 1);
@@ -506,6 +547,7 @@ void parseArguments(int argc, char* argv[], ProgramArguments& args) {
 
 } // namespace
 
+//Основная функция приложения
 int runApplication(int argc, char* argv[]) {
     try {
         ProgramArguments args;
@@ -546,9 +588,9 @@ int runApplication(int argc, char* argv[]) {
 
         std::cout << "Проверка совпадения файлов..." << std::endl;
         if (compareFiles(args.input_file, args.decoded_file)) {
-            std::cout << " Файлы идентичны. Шифрование/дешифрование выполнено успешно." << std::endl;
+            std::cout << "✓ Файлы идентичны. Шифрование/дешифрование выполнено успешно." << std::endl;
         } else {
-            std::cout << " Ошибка: файлы отличаются!" << std::endl;
+            std::cout << "✗ Ошибка: файлы отличаются!" << std::endl;
             freeKeyArray(keys);
             return 1;
         }
